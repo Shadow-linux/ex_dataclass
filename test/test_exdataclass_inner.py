@@ -90,6 +90,7 @@ class ExTypeC:
     c_b: ExTypeB = field(default_factory=ExTypeB)
     c_list_a: typing.List[ExTypeA] = field(default_factory=list)
     c_list_b: typing.List[ExTypeB] = field(default_factory=list)
+    c_list_c: typing.List[ExBasicB] = field(default_factory=list)
 
 
 ex_type_c = ExTypeC(**{
@@ -116,6 +117,14 @@ ex_type_c = ExTypeC(**{
             "b1": 1,
             "b2": 2,
         }
+    ],
+    "c_list_c": [
+        {
+            "a_0_1": 1,
+            "b_1"  : "b1",
+            "a_1"  : "a1",
+            "a_2"  : "a2",
+        }
     ]
 })
 
@@ -125,6 +134,7 @@ print(ex_type_c.c_list_b[0])
 assert ex_type_c.c_a.a1 == "1", True
 assert ex_type_c.c_b.b1 == 1, True
 assert ex_type_c.c_list_a[0].a1 == "1", True
+assert type(ex_type_c.c_list_c[0]) == ExBasicB, True
 
 print()
 # 多类型下自动选择最优解，优先级从左到右
@@ -395,6 +405,7 @@ class NormalClass:
     def __init__(self, user_id: int, username: str):
         self.user_id = user_id
         self.username = username
+
 
 @ex_dataclass
 class ExampleDatetime(EXPack):
