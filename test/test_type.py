@@ -1,5 +1,6 @@
 import pprint
-from dataclasses import dataclass
+from dataclasses import dataclass, is_dataclass
+
 print(dict.__name__)
 print(str.__name__)
 print(set.__name__)
@@ -52,4 +53,9 @@ ex_type_c = ExTypeC(**{
     })
 print(ex_type_c)
 print(ex_type_c)
-print(typing.Type.__class__)
+print(type(typing.Type.__args__[0].__class__))
+print(is_dataclass(typing.Type[ExTypeC].__args__[0]))
+print(typing.Union.__class__)
+print(type(typing.List.__args__[0]) == typing.TypeVar)
+print(typing.List.__args__)
+
