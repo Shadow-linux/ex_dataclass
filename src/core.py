@@ -4,8 +4,6 @@ core handler
 import typing
 from abc import abstractmethod, ABCMeta
 
-import asyncio
-
 from . import m
 from .m import is_dataclass
 from src import type_
@@ -31,43 +29,60 @@ class _FieldTyping(m.ToolImpl, metaclass=ABCMeta):
     def get_ft_attr(self, ft: m.DataClassType) -> typing.Dict[m.f_name, m.f_type]:
         return ft.__dict__['__annotations__']
 
+    def __calculate_best_chosen(self, ft: m.f_type, max_score: int) -> typing.Tuple[m.f_type, int]:
+        score = 0
+
+        if is_dataclass(ft):
+            # others
+            # get DataClassType's attributes, return data format: typing.Dict[name, f_type]
+            attr_dict = self.get_ft_attr(ft)
+            # compare 'DataClassType',  which has the most attribute
+            for key, value in self.f.field_value.items():
+                attr_ft = attr_dict.get(key, None)
+                if attr_ft:
+                    # todo 这一个类型断言的方法并不完善，可能影响性能且不能判断全部类型；
+                    if attr_ft in type_.BASIC_TYPE_LIST:
+                        if isinstance(value, attr_ft):
+                            score += 1.1
+                    else:
+                        score += 1
+
+            if score > max_score:
+                max_score = score
+                return ft, max_score
+
+        # special container typing.Type
+        if type_.is_typing_type(ft):
+            ftt = FieldTypingType(Field_(e_class=self.f.e_class, field_type=ft, field_value=self.f.field_value,
+                                         field_name=self.f.field_name))
+            ftt.handle()
+            return self.__calculate_best_chosen(ftt.smart_ft, max_score)
+
+        return ft, max_score
+
     # get compatibility field type
     def smart_choice_ft(self,
                         attr_field_types: typing.List[m.DataClassType]) -> typing.Optional[m.DataClassType]:
         return_ft: m.DataClassType = None
-        max_cnt = 0
+        max_score = 0
 
         if self.debug:
             print(f"{self.f}.chosen_types: {attr_field_types}")
             print(f"{self.f}.smart_choice_ft.field_value: {self.f.field_value}")
 
         for ft in attr_field_types:
-            counter = 0
-
-            if is_dataclass(ft):
-                # get DataClassType's attributes, return data format: typing.Dict[name, f_type]
-                attr_dict = self.get_ft_attr(ft)
-                # compare 'DataClassType',  which has the most attribute
-                for key, value in self.f.field_value.items():
-                    attr_ft = attr_dict.get(key, None)
-                    if attr_ft:
-                        # counter += 1
-                        # todo 这一个类型断言的方法并不完善，可能影响性能且不能判断全部类型；
-                        if attr_ft in type_.BASIC_TYPE_LIST:
-                            if isinstance(value, attr_ft):
-                                counter += 1
-
-                if counter > max_cnt:
-                    max_cnt = counter
-                    return_ft = ft
+            tmp_return_ft, tmp_max_score = self.__calculate_best_chosen(ft, max_score)
+            if tmp_max_score > max_score:
+                max_score = tmp_max_score
+                return_ft = tmp_return_ft
 
         if self.debug:
-            print(f"{self.f}.smart_choice_ft: {return_ft}")
+            print(f"{self.f}.smart_choice_ft: {return_ft}, score: {max_score}")
 
         return return_ft
 
     @abstractmethod
-    def handle(self):
+    def handle(self, *args, **kwargs):
         raise NotImplementedError
 
 
@@ -97,13 +112,11 @@ class FieldTypingUnion(_FieldTyping):
         self.smart_ft: m.DataClassType = None
 
     def handle(self) -> typing.Union[m.DataClassObj, typing.Any]:
-
         attr_field_types = self.get_attr_field_types()
 
-        if attr_field_types:
-            self.smart_ft = self.smart_choice_ft(list(attr_field_types))
-            if self.smart_ft:
-                return self.smart_ft(**self.f.field_value)
+        self.smart_ft = self.smart_choice_ft(list(attr_field_types))
+        if self.smart_ft:
+            return self.smart_ft(**self.f.field_value)
 
         return self.f.field_value
 
@@ -137,16 +150,15 @@ class FieldTypingList(_FieldTyping):
                 return ftu.smart_ft
         return None
 
-    async def handle(self) -> typing.List[object]:
+    def handle(self) -> typing.List[object]:
 
         if getattr(self.f.field_type, "_name", None) == self.FT_NAME:
             self.iterator_impl = IteratorImplement.with_debug(self.debug, self.f)
-            res_fv_list = await self.iterator_impl.gen_values()
+            res_fv_list = self.iterator_impl.gen_values()
 
         else:
             # todo 支持python3.9 新类型注解: list[int], 后面需重构
             res_fv_list = self.f.field_value
-
         return res_fv_list
 
 
@@ -241,7 +253,7 @@ class IteratorImplement(m.ToolImpl):
 
         return values
 
-    async def __handle_recursive(self, current_layer, values: typing.List[typing.Any]) -> typing.List[typing.Any]:
+    def __handle_recursive(self, current_layer, values: typing.List[typing.Any]) -> typing.List[typing.Any]:
         if current_layer == self.__layer_amount:
             if self.__container_attr_type:
                 return self.__inner_container_attr_value(values)
@@ -250,9 +262,8 @@ class IteratorImplement(m.ToolImpl):
         tmp_value_list = []
         for v in values:
             tmp_value_list.append(
-                    await self.__handle_recursive(current_layer + 1, v)
+                    self.__handle_recursive(current_layer + 1, v)
             )
-
         return tmp_value_list
 
     @property
@@ -263,14 +274,15 @@ class IteratorImplement(m.ToolImpl):
     def container_attr_type(self):
         return self.__container_attr_type
 
-    async def gen_values(self) -> typing.List[typing.Any]:
+    def gen_values(self) -> typing.List[typing.Any]:
         self.__layer_amount = len(self.__layer_container_types)
         self.is_recursive_iterator = self.__layer_amount > 1
         if self.debug:
             print(f"{self.f}.container_attr_type: {self.container_attr_type}")
             print(f"{self.f}.is_recursive_iterator: {self.is_recursive_iterator}")
             print(f"{self.f}.__layer_amount: {self.layer_amount}")
-        res = await self.__handle_recursive(current_layer=1, values=self.f.field_value)
+
+        res = self.__handle_recursive(current_layer=1, values=self.f.field_value)
         return res
 
 
@@ -281,7 +293,9 @@ class Core:
     def handle_list_type(cls, f: Field_) -> typing.Optional[typing.List[object]]:
         if f.is_list:
             ftl = FieldTypingList.with_debug(cls.DEBUG, f)
-            return asyncio.run(ftl.handle())
+            res = ftl.handle()
+            return res
+
         return None
 
     @classmethod

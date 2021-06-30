@@ -84,7 +84,7 @@ class ExTypeB:
     b2: int = field(default_factory=int)
 
 
-@ex_dataclass(ex_debug=False)
+@ex_dataclass(ex_debug=True)
 class ExTypeC:
     c_a: ExTypeA = field(default_factory=ExTypeA)
     c_b: ExTypeB = field(default_factory=ExTypeB)
@@ -160,7 +160,7 @@ class ExUnionTA_2_1:
     aa: str = field(default_factory=str)
 
 
-@ex_dataclass(ex_debug=False)
+@ex_dataclass(ex_debug=True)
 class ExampleUnion:
     u1: int = field(default_factory=int)
     # test typing.Union, expect ExUnionTA_1
@@ -378,7 +378,6 @@ print(ewmc)
 print(ewmc2)
 print(ewmc.asdict())
 
-
 print()
 print("=" * 50 + " with EXPack asdict extend functional " + "=" * 50)
 import datetime
@@ -420,25 +419,23 @@ ed_dict = ed.asdict()
 print(ed_dict)
 assert type(ed_dict['dd']) == str, True
 
-
 print()
 print("=" * 50 + " typing type nest typing union " + "=" * 50)
 
+
 @ex_dataclass()
 class UnionA:
-
-    a1 :int = field(default_factory=int)
-    a2 :int = field(default_factory=int)
+    a1: int = field(default_factory=int)
+    a2: int = field(default_factory=int)
 
 
 @ex_dataclass
 class TypeType:
-
     t1: int = field(default_factory=int)
+
 
 @ex_dataclass
 class TypeA(TypeType):
-
     a1: int = field(default_factory=int)
     a2: int = field(default_factory=int)
 
@@ -449,17 +446,15 @@ class TypeB(TypeType):
     b2: int = field(default_factory=int)
 
 
-
-
-
 @ex_dataclass(ex_debug=True)
 class TypingUnionNestTypingType(EXPack):
     # expect UnionA
-    test1: typing.Union[typing.Type[TypeType], UnionA] = field(default_factory=UnionA)
+    test1: typing.Union[UnionA, typing.Type[TypeType]] = field(default_factory=UnionA)
     # expect TypeA
     test2: typing.Union[typing.Type[TypeType], UnionA] = field(default_factory=TypeA)
     # expect TypeB
     test3: typing.Union[TypeA, TypeType, TypeB, UnionA] = field(default_factory=TypeB)
+
 
 data = {
     "test1": {"a1": 1, "a2": 2},
