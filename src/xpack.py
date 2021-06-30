@@ -70,6 +70,10 @@ class EXPack:
         return self
 
     @classmethod
+    def dict_loads(cls, data: dict):
+        return cls(**data)
+
+    @classmethod
     def json_loads(cls, data: str):
         return cls(**json.loads(data))
 

@@ -60,7 +60,7 @@ for _ in range(0, 5):
     TestBench(data_1000, is_print_data=False)
 
 
-print()
-print("=" * 50 + " basic 10000 test " + "=" * 50)
-for _ in range(0, 5):
-    TestBench(data_10000, is_print_data=False)
+# print()
+# print("=" * 50 + " basic 10000 test " + "=" * 50)
+# for _ in range(0, 5):
+#     TestBench(data_10000, is_print_data=False)

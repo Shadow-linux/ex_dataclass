@@ -19,7 +19,7 @@ class ExampleA:
     dict_: dict = field(default_factory=dict)
     t_list_1: typing.List[str] = field(default_factory=list)
     t_list_2: typing.List = field(default_factory=list)
-    t_dict: typing.Dict = field(default_factory=dict)
+    # t_dict: typing.Dict = field(default_factory=dict)
 
 
 example_a = ExampleA(**{
@@ -378,22 +378,6 @@ print(ewmc)
 print(ewmc2)
 print(ewmc.asdict())
 
-data = {
-    "tl1": [[1, 2], [3, 4]],
-    "tl2": [[[1, 2], [3, 4]]],
-    "tl3": [
-        [{"b1": 1, "b2": 2}, {"b1": 3, "b2": 4}],
-        [{"b1": 5, "b2": 6}, {"b1": 7, "b2": 8}],
-    ],
-    "tl4": [
-        [{"b1": 1, "basic": "b"}, {"b1": 2, "basic": "b"}],
-        [{"a1": 1, "basic": "a"}, {"a1": 2, "basic": "a"}]
-    ],
-    "tl5": [
-        [{"a1": 1, "aa": 1}, {"a2": 2, "aa": 2}]
-    ],
-    "tl6": [],
-}
 
 print()
 print("=" * 50 + " with EXPack asdict extend functional " + "=" * 50)
@@ -435,3 +419,52 @@ assert ed.nc.user_id == 1, True
 ed_dict = ed.asdict()
 print(ed_dict)
 assert type(ed_dict['dd']) == str, True
+
+
+print()
+print("=" * 50 + " typing type nest typing union " + "=" * 50)
+
+@ex_dataclass()
+class UnionA:
+
+    a1 :int = field(default_factory=int)
+    a2 :int = field(default_factory=int)
+
+
+@ex_dataclass
+class TypeType:
+
+    t1: int = field(default_factory=int)
+
+@ex_dataclass
+class TypeA(TypeType):
+
+    a1: int = field(default_factory=int)
+    a2: int = field(default_factory=int)
+
+
+@ex_dataclass
+class TypeB(TypeType):
+    b1: int = field(default_factory=int)
+    b2: int = field(default_factory=int)
+
+
+
+
+
+@ex_dataclass(ex_debug=True)
+class TypingUnionNestTypingType(EXPack):
+    # expect UnionA
+    test1: typing.Union[typing.Type[TypeType], UnionA] = field(default_factory=UnionA)
+    # expect TypeA
+    test2: typing.Union[typing.Type[TypeType], UnionA] = field(default_factory=TypeA)
+    # expect TypeB
+    test3: typing.Union[TypeA, TypeType, TypeB, UnionA] = field(default_factory=TypeB)
+
+data = {
+    "test1": {"a1": 1, "a2": 2},
+    "test2": {"a1": 1, "a2": 2, "t1": 1},
+    "test3": {"b1": 1, "b2": 2, "t1": 1},
+}
+tuntt = TypingUnionNestTypingType.dict_loads(data)
+print(tuntt)

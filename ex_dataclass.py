@@ -3,6 +3,7 @@ ex_dataclass
 """
 import json
 import typing
+import asyncio
 from src import m
 from src.m import dataclass, field
 from src.type_ import Field_

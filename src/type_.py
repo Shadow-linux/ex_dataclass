@@ -22,7 +22,7 @@ import typing
 from . import m
 from .m import is_dataclass
 
-BASIC_TYPE_LIST = [str, int, float, ]
+BASIC_TYPE_LIST = [str, int, float, list, dict,]
 
 REGISTER_TYPE_LIST = [
                          # normal container
