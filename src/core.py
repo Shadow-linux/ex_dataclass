@@ -53,8 +53,9 @@ class _FieldTyping(m.ToolImpl, metaclass=ABCMeta):
 
         # special container typing.Type
         if type_.is_typing_type(ft):
-            ftt = FieldTypingType(Field_(e_class=self.f.e_class, field_type=ft, field_value=self.f.field_value,
-                                         field_name=self.f.field_name))
+            ftt = FieldTypingType.with_debug(self.debug, Field_(e_class=self.f.e_class, field_type=ft,
+                                                                field_value=self.f.field_value,
+                                                                field_name=self.f.field_name))
             ftt.handle()
             return self.__calculate_best_chosen(ftt.smart_ft, max_score)
 
