@@ -21,6 +21,7 @@ __all__ = [
 ]
 
 EX_DEBUG = "ex_debug"
+EX_CONCURRENT_ON = "ex_concurrent_on"
 EX_CHECK_VALIDATE_TYPE = "ex_check_validate_type"
 
 EX_DATACLASS_PARAMS = [
@@ -29,7 +30,7 @@ EX_DATACLASS_PARAMS = [
 ]
 
 
-def __process_e_class(c_class: typing.Type, *args: typing.Tuple, **kwargs: typing.Dict):
+def __process_e_class(c_class: typing.Type, **kwargs):
     # ex_dataclass params
     debug = kwargs.get(EX_DEBUG, False)
     check_validate_type = kwargs.get('check_validate_type', False)
@@ -81,9 +82,19 @@ def __process_e_class(c_class: typing.Type, *args: typing.Tuple, **kwargs: typin
 
     return e_class
 
-
-def ex_dataclass(*args, **kwargs):
+# main
+def ex_dataclass(_cls=None, *, ex_debug=False, init=True, repr=True, eq=True, order=False,
+                 unsafe_hash=False, frozen=False):
     def wrapper(c_class: typing.Type):
-        return __process_e_class(c_class, *args, **kwargs)
+        return __process_e_class(c_class,
+                                 ex_debug=ex_debug,
+                                 init=init,
+                                 repr=repr,
+                                 eq=eq,
+                                 order=order,
+                                 unsafe_hash=unsafe_hash, frozen=frozen)
 
-    return wrapper(args[0]) if args else wrapper
+    if _cls is None:
+        return wrapper
+
+    return wrapper(_cls)

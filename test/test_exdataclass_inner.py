@@ -446,7 +446,7 @@ class TypeB(TypeType):
     b2: int = field(default_factory=int)
 
 
-@ex_dataclass(ex_debug=True)
+@ex_dataclass(ex_debug=False)
 class TypingUnionNestTypingType(EXPack):
     # expect UnionA
     test1: typing.Union[UnionA, typing.Type[TypeType]] = field(default_factory=UnionA)
