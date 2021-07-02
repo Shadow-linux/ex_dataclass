@@ -1,7 +1,6 @@
 import typing
 from collections import ChainMap
-from dataclasses import dataclass
-from ex_dataclass import ex_dataclass, field
+from ex_dataclass.ex_dataclass import ex_dataclass, field
 
 baseline = {'music': 'bach', 'art': 'rembrandt'}
 adjustments = {'art': 'van gogh', 'opera': 'carmen'}

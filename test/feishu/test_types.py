@@ -1,4 +1,4 @@
-from ex_dataclass import ex_dataclass, field
+from ex_dataclass.ex_dataclass import ex_dataclass, field
 import typing
 
 

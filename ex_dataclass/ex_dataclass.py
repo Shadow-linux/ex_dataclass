@@ -4,11 +4,11 @@ ex_dataclass
 import json
 import typing
 import asyncio
-from src import m
-from src.m import dataclass, field
-from src.type_ import Field_
-from src.core import Core
-from src.xpack import EXPack, asdict, asdict_func_type
+from ex_dataclass import m
+from ex_dataclass.m import dataclass, field
+from ex_dataclass.type_ import Field_
+from ex_dataclass.core import Core
+from ex_dataclass.xpack import EXPack, asdict, asdict_func_type
 
 __all__ = [
     'field',
@@ -17,7 +17,7 @@ __all__ = [
     'ex_dataclass',
     'asdict_func_type',
     'EXPack',
-    'Field_'
+    'Field_',
 ]
 
 EX_DEBUG = "ex_debug"

@@ -6,8 +6,8 @@ from abc import abstractmethod, ABCMeta
 
 from . import m
 from .m import is_dataclass
-from src import type_
-from src.type_ import Field_, ignore_type
+from ex_dataclass import type_
+from ex_dataclass.type_ import Field_, ignore_type
 
 
 class _FieldTyping(m.ToolImpl, metaclass=ABCMeta):

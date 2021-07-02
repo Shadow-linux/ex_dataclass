@@ -1,8 +1,6 @@
-import time
-from dataclasses import  dataclass
 from time import perf_counter as pc
-from ex_dataclass import ex_dataclass, typing, asdict, field
-from src.xpack import EXPack
+from ex_dataclass.ex_dataclass import ex_dataclass, typing, field
+from ex_dataclass.xpack import EXPack
 
 b_file_1 = "basic_1.json"
 b_file_1000 = "basic_1000.json"

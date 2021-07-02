@@ -1,6 +1,6 @@
 import json
 import typing
-from ex_dataclass.ex_dataclass import ex_dataclass, asdict, field, Field_, EXPack
+from ex_dataclass import ex_dataclass, asdict, field, Field_, EXPack
 
 
 print("=" * 50 + " basic " + "=" * 50)

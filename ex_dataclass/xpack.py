@@ -10,7 +10,7 @@ import copy
 import json
 import typing
 
-from src.type_ import Field_
+from ex_dataclass.type_ import Field_
 from . import m
 
 
