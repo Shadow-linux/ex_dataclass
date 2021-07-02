@@ -139,3 +139,7 @@ print(jack)
 print(jack.details.phone)
 print(rose)
 print(rose.details.phone)
+# Jack(name='jack', age=18, height=1.8, weight=125.0, gender='male', details=PersonDetails(address='xxxx', hobbies=['aa', 'bb', 'cc'], phone='123456789'))
+# 123456789
+# Rose(name='rose', age=18, height=1.68, weight=98.0, gender='female', details=PersonDetails(address='xxxx', hobbies=['aa', 'bb', 'cc'], phone='987654321'))
+# 987654321
