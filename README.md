@@ -4,7 +4,7 @@
 [![VERSION](https://img.shields.io/github/v/release/Shadow-linux/ex_dataclass)](https://img.shields.io/github/v/release/Shadow-linux/ex_dataclass)
 [![PYPI](https://img.shields.io/pypi/v/ex-dataclass)](https://img.shields.io/pypi/v/ex-dataclass)
 [![LANGUAGE](https://img.shields.io/badge/python-3.7%2B-blue)](https://img.shields.io/badge/python-3.7%2B-blue)
-[![CODEBEAT]](https://img.shields.io/badge/codebeat-4.00-success)(https://img.shields.io/badge/codebeat-4.00-success)
+[![CODEBEAT](https://img.shields.io/badge/codebeat-4.00-success)](https://img.shields.io/badge/codebeat-4.00-success)
 ### ex_dataclass 是什么？
 
 * 它一款继基于 `dataclass` 开发的 `python` 库，但对数据模型处理更加的友好。它通过  **Python3类型注解** 能轻易的处理 `dict` 与自定义 `class` 间的转换，从而明确复杂数据模型的类型，降低维护代码的压力及理清编码思路等作用。
