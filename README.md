@@ -12,6 +12,28 @@
 * 它在配合 `Python3 typing` 模块的特殊容器的类型注解能实现更多高级功能；
 
 
+### 特性
+
+* **注解类型支持**
+- [x] int
+- [x] str
+- [x] float
+- [x] dict
+- [x] list
+- [x] typing.List
+- [x] typing.Union
+- [x] typing.Type
+
+* **功能**
+- [x] 支持 `ex_dataclass` 类型继承的正反解析；
+- [x] 支持 `typing.List` 中 `ex_dataclass` 类型正反解析；
+- [x] 支持 `typing.List` 嵌套正反解析，如：`{a: [[{a:1, b:2}, {a:3, b:4}]]}`
+- [x] 支持 `typing.Union` 和 `typing.Type` 特殊容器类型注解的多态行为，精确匹配字段存在最多 `ex_dataclass`（类型断言上，仅支持普通pytho类型；如：int，float等）
+- [x] 支持反向解析下存在冗余字段，默认行为是抛弃冗余字段（可进行配置）
+- [x] 支持typing.Union 和 typing.Type 特殊容器类型相互嵌套场景 
+- [ ] 支持类型注解作用于值的校验，类似参数签名，若不正确引发异常
+- [ ] 支持 `ex_dataclass` 类型全属性字段名一一对应检测，若不正确引发异常
+
 ### 快速开始
 
 > 示例 1
@@ -178,27 +200,6 @@ print(rose.details.phone)
 * 一段复杂数据的补全
 
 
-### 特性
-
-* **注解类型支持**
-- [x] int
-- [x] str
-- [x] float
-- [x] dict
-- [x] list
-- [x] typing.List
-- [x] typing.Union
-- [x] typing.Type
-
-* **功能**
-- [x] 支持 `ex_dataclass` 类型继承的正反解析；
-- [x] 支持 `typing.List` 中 `ex_dataclass` 类型正反解析；
-- [x] 支持 `typing.List` 嵌套正反解析，如：`{a: [[{a:1, b:2}, {a:3, b:4}]]}`
-- [x] 支持 `typing.Union` 和 `typing.Type` 特殊容器类型注解的多态行为，精确匹配字段存在最多 `ex_dataclass`（类型断言上，仅支持普通pytho类型；如：int，float等）
-- [x] 支持反向解析下存在冗余字段，默认行为是抛弃冗余字段（可进行配置）
-- [x] 支持typing.Union 和 typing.Type 特殊容器类型相互嵌套场景 
-- [ ] 支持类型注解作用于值的校验，类似参数签名，若不正确引发异常
-- [ ] 支持 `ex_dataclass` 类型全属性字段名一一对应检测，若不正确引发异常
 
 
 
