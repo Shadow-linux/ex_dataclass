@@ -454,12 +454,15 @@ class TypingUnionNestTypingType(EXPack):
     test2: typing.Union[typing.Type[TypeType], UnionA] = field(default_factory=TypeA)
     # expect TypeB
     test3: typing.Union[TypeA, TypeType, TypeB, UnionA] = field(default_factory=TypeB)
+    # expect
+    test4: typing.List[typing.Union[typing.Type[TypeType], UnionA]]  = field(default_factory=list)
 
 
 data = {
     "test1": {"a1": 1, "a2": 2},
     "test2": {"a1": 1, "a2": 2, "t1": 1},
     "test3": {"b1": 1, "b2": 2, "t1": 1},
+    "test4": [{"a1": 1, "a2": 2, "t1": 1},  {"b1": 1, "b2": 2, "t1": 1}]
 }
 tuntt = TypingUnionNestTypingType.dict_loads(data)
 print(tuntt)
