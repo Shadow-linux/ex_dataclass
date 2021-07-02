@@ -1,24 +1,12 @@
 """
-最初始的版本
+The original version
 """
+import typing
 import json
 from dataclasses import dataclass, is_dataclass
-import typing
 
 
 def ex_dataclass(*args, **kwargs):
-    """
-    desc:
-        dataclass增强版，支持原生功能及以下扩展能力；
-            1、支持class类型正反递归解析；
-            2、支持列表正反解析；
-            3、支持列表简易嵌套正反解析，如：{a: [[1, 2, 3]]}
-            4、支持typing.Type类型注解的多态行为，精确匹配字段存在最多的class；
-            5、允许反向解析存在冗余字段；
-
-    function:
-        json_loads(value: str)  // 直接载入json数据
-    """
 
     def wrapper(check_class):
 

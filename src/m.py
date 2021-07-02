@@ -39,3 +39,8 @@ class ToolImpl:
         c = cls(*args, **kwargs)
         c.debug = debug
         return c
+
+
+def iter_generator(handle_list: typing.List[typing.Any]) -> typing.Any:
+    for item in handle_list:
+        yield item

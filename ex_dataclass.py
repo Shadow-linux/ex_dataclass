@@ -5,8 +5,9 @@ import json
 import typing
 import asyncio
 from src import m
+from src._turbo import FutureTurboEngine
 from src.m import dataclass, field
-from src.type_ import Field_
+from src._type import Field_
 from src.core import Core
 from src.xpack import EXPack, asdict, asdict_func_type
 
@@ -21,19 +22,20 @@ __all__ = [
 ]
 
 EX_DEBUG = "ex_debug"
-EX_CONCURRENT_ON = "ex_concurrent_on"
+EX_TURBO_ONN = "ex_turbo_on"
 EX_CHECK_VALIDATE_TYPE = "ex_check_validate_type"
 
 EX_DATACLASS_PARAMS = [
     EX_DEBUG,
-    EX_CHECK_VALIDATE_TYPE
+    EX_CHECK_VALIDATE_TYPE,
+    EX_TURBO_ONN,
 ]
 
 
 def __process_e_class(c_class: typing.Type, **kwargs):
     # ex_dataclass params
     debug = kwargs.get(EX_DEBUG, False)
-    check_validate_type = kwargs.get('check_validate_type', False)
+    turbo_ob = kwargs.get(EX_TURBO_ONN, False)
 
     # pure dataclass kwargs
     kwas = kwargs.keys()
@@ -52,6 +54,10 @@ def __process_e_class(c_class: typing.Type, **kwargs):
         # finally kwargs
         nv_kwargs = {}
         props_map = {}
+        turbo_engine = None
+
+        if turbo_ob:
+            turbo_engine = FutureTurboEngine()
 
         for field_name, field_value in kwargs.items():
             # find field type
@@ -61,14 +67,22 @@ def __process_e_class(c_class: typing.Type, **kwargs):
             if debug: print(f_)
 
             f_.build()
+            props_map[field_name] = f_
 
             # ignore not define property
             if f_.is_abort:
                 continue
 
             Core.DEBUG = debug
-            nv_kwargs[field_name] = Core.handle(f_)
-            props_map[field_name] = f_
+
+            if turbo_engine:
+                turbo_engine.refuel(Core.handle, f_)
+            else:
+                nv_kwargs[field_name] = Core.handle(f_).field_value
+
+        if turbo_engine:
+            for f_ in turbo_engine.as_complete():
+                nv_kwargs[f_.field_name] = f_.field_value
 
         o_init(self, *args, **nv_kwargs)
         if getattr(self, m.EXPackField, None):
@@ -83,11 +97,12 @@ def __process_e_class(c_class: typing.Type, **kwargs):
     return e_class
 
 # main
-def ex_dataclass(_cls=None, *, ex_debug=False, init=True, repr=True, eq=True, order=False,
+def ex_dataclass(_cls=None, *, ex_debug=False, ex_turbo_on=False, init=True, repr=True, eq=True, order=False,
                  unsafe_hash=False, frozen=False):
     def wrapper(c_class: typing.Type):
         return __process_e_class(c_class,
                                  ex_debug=ex_debug,
+                                 ex_turbo_on=ex_turbo_on,
                                  init=init,
                                  repr=repr,
                                  eq=eq,

@@ -1,4 +1,5 @@
 import time
+import json
 from dataclasses import  dataclass
 from time import perf_counter as pc
 from ex_dataclass import ex_dataclass, typing, asdict, field
@@ -22,6 +23,7 @@ def TestBench(data, is_print_data=False):
     d = Data.json_loads(data)
     print(pc() - start)
     if is_print_data: print(d)
+
 
 @ex_dataclass
 class Skill:
@@ -52,26 +54,30 @@ class Person(EXPack):
     skills: Skill = field(default_factory=Skill)
     experience: typing.List[Exper] = field(default_factory=list)
 
-@ex_dataclass
+@ex_dataclass(ex_turbo_on=False, ex_debug=False)
 class Data(EXPack):
 
      data: typing.List[Person] = field(default_factory=list)
+     data1: typing.List[Person] = field(default_factory=list)
+     data2: typing.List[Person] = field(default_factory=list)
 
-
-print()
-print("=" * 50 + " basic 1 test " + "=" * 50)
-for _ in range(0, 5):
-    TestBench(data_1, is_print_data=False)
 #
-print()
-print("=" * 50 + " basic 1000 test " + "=" * 50)
-for _ in range(0, 5):
-    TestBench(data_1000, is_print_data=False)
+# print()
+# print("=" * 50 + " basic 1 test " + "=" * 50)
+# for _ in range(0, 5):
+#     d = TestBench(data_1, is_print_data=False)
+#
+# print()
+# print("=" * 50 + " basic 1000 test " + "=" * 50)
+# for _ in range(0, 5):
+#     TestBench(data_1000, is_print_data=False)
 
 
 print()
 print("=" * 50 + " basic 10000 test " + "=" * 50)
 for _ in range(0, 5):
     TestBench(data_10000, is_print_data=False)
+
+
 
 

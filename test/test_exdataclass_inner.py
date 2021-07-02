@@ -1,7 +1,7 @@
 import json
 import typing
 from ex_dataclass import ex_dataclass, asdict, field
-from src.type_ import Field_
+from src._type import Field_
 from src.xpack import EXPack
 
 print("=" * 50 + " basic " + "=" * 50)
@@ -446,7 +446,7 @@ class TypeB(TypeType):
     b2: int = field(default_factory=int)
 
 
-@ex_dataclass(ex_debug=False)
+@ex_dataclass(ex_debug=False, ex_turbo_on=True)
 class TypingUnionNestTypingType(EXPack):
     # expect UnionA
     test1: typing.Union[UnionA, typing.Type[TypeType]] = field(default_factory=UnionA)

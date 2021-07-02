@@ -6,8 +6,8 @@ from abc import abstractmethod, ABCMeta
 
 from . import m
 from .m import is_dataclass
-from src import type_
-from src.type_ import Field_, ignore_type
+from src import _type
+from src._type import Field_, ignore_type
 
 
 class _FieldTyping(m.ToolImpl, metaclass=ABCMeta):
@@ -41,7 +41,7 @@ class _FieldTyping(m.ToolImpl, metaclass=ABCMeta):
                 attr_ft = attr_dict.get(key, None)
                 if attr_ft:
                     # todo 这一个类型断言的方法并不完善，可能影响性能且不能判断全部类型；
-                    if attr_ft in type_.BASIC_TYPE_LIST:
+                    if attr_ft in _type.BASIC_TYPE_LIST:
                         if isinstance(value, attr_ft):
                             score += 1.1
                     else:
@@ -52,7 +52,7 @@ class _FieldTyping(m.ToolImpl, metaclass=ABCMeta):
                 return ft, max_score
 
         # special container typing.Type
-        if type_.is_typing_type(ft):
+        if _type.is_typing_type(ft):
             ftt = FieldTypingType.with_debug(self.debug, Field_(e_class=self.f.e_class, field_type=ft,
                                                                 field_value=self.f.field_value,
                                                                 field_name=self.f.field_name))
@@ -185,6 +185,7 @@ class IteratorImplement(m.ToolImpl):
     # find the deepest attribute_type like: typing.List[typing.List[<DataClassType>]]
     # we should find the <DataClassType>
     def __find_the_container_attribute_type(self, ft: m.f_type) -> typing.Optional[m.f_type]:
+        # absolute can find the container attribute type
         attr_field_types = ft.__dict__.get('__args__', ())
         if self.debug:
             print(f"{self.f}.attr_field_types: {attr_field_types}")
@@ -220,15 +221,17 @@ class IteratorImplement(m.ToolImpl):
     def __inner_container_attr_value(self, values: typing.List[typing.Any]) -> typing.List[typing.Any]:
         if self.__cat_isdataclass:
             tmp_value_list = []
+            tmp_value_list_append = tmp_value_list.append
             for v in values:
-                tmp_value_list.append(self.__container_attr_type(**v))
+                tmp_value_list_append(self.__container_attr_type(**v))
 
             return tmp_value_list
 
         # judge typing type | union
         if values:
             tmp_value_list = []
-            if type_.is_typing_union(self.__container_attr_type):
+            tmp_value_list_append = tmp_value_list.append
+            if _type.is_typing_union(self.__container_attr_type):
                 for idx, v in enumerate(values):
 
                     ex_ft = self.__handle_typing_union(Field_(e_class=self.f.e_class,
@@ -236,11 +239,11 @@ class IteratorImplement(m.ToolImpl):
                                                               field_type=self.__container_attr_type,
                                                               field_value=values[idx]
                                                               ).build())
-                    if ex_ft: tmp_value_list.append(ex_ft(**v))
+                    if ex_ft: tmp_value_list_append(ex_ft(**v))
 
                 return tmp_value_list
 
-            if type_.is_typing_type(self.__container_attr_type):
+            if _type.is_typing_type(self.__container_attr_type):
                 for idx, v in enumerate(values):
 
                     ex_ft = self.__handle_typing_type(Field_(e_class=self.f.e_class,
@@ -248,7 +251,7 @@ class IteratorImplement(m.ToolImpl):
                                                              field_type=self.__container_attr_type,
                                                              field_value=values[idx]
                                                              ).build())
-                    if ex_ft: tmp_value_list.append(ex_ft(**v))
+                    if ex_ft: tmp_value_list_append(ex_ft(**v))
 
                 return tmp_value_list
 
@@ -261,8 +264,9 @@ class IteratorImplement(m.ToolImpl):
             return values
 
         tmp_value_list = []
+        tmp_value_list_append = tmp_value_list.append
         for v in values:
-            tmp_value_list.append(
+            tmp_value_list_append(
                     self.__handle_recursive(current_layer + 1, v)
             )
         return tmp_value_list
@@ -330,7 +334,7 @@ class Core:
         return f.field_value
 
     @classmethod
-    def handle(cls, f: Field_) -> object:
+    def handle(cls, f: Field_) -> Field_:
         if cls.DEBUG:
             print(f"{f}.type_name: {f.type_name}")
             print(f"{f}.field_type: {f.field_type}")
@@ -344,9 +348,9 @@ class Core:
                 cls.handle_typing_type,
                 cls.handle_default_type,
         ):
-            obj = h(f)
-            if obj:
-                return obj
+            value_obj = h(f)
+            if value_obj:
+                f.field_value = value_obj
 
         # If it cannot be processed, return to the original value
-        return f.field_value
+        return f
