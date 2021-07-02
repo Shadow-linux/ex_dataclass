@@ -73,9 +73,14 @@ class EXPack:
     def dict_loads(cls, data: dict):
         return cls(**data)
 
+    def asdict(self) -> typing.Dict:
+        return asdict(self)
+
     @classmethod
     def json_loads(cls, data: str):
         return cls(**json.loads(data))
 
-    def asdict(self) -> typing.Dict:
-        return asdict(self)
+    def json_dumps(self) -> str:
+        return json.dumps(asdict(self))
+
+

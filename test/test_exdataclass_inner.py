@@ -5,6 +5,8 @@ from ex_dataclass.ex_dataclass import ex_dataclass, asdict, field, Field_, EXPac
 
 print("=" * 50 + " basic " + "=" * 50)
 
+name = str
+age = int
 
 @ex_dataclass(ex_debug=False)
 class ExampleA:
@@ -18,7 +20,7 @@ class ExampleA:
     dict_: dict = field(default_factory=dict)
     t_list_1: typing.List[str] = field(default_factory=list)
     t_list_2: typing.List = field(default_factory=list)
-    # t_dict: typing.Dict = field(default_factory=dict)
+    t_dict: typing.Dict[name, age] = field(default_factory=dict)
 
 
 example_a = ExampleA(**{
@@ -40,7 +42,7 @@ print("=" * 50 + " inherit " + "=" * 50)
 
 
 @ex_dataclass
-class ExBasicA0:
+class ExBasicA0(EXPack):
     a_0_1: int = field(default_factory=int)
 
 

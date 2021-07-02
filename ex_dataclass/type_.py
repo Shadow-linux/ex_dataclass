@@ -81,8 +81,9 @@ class Field_:
         self.is_typing_type = False
 
         self.is_abort = False
-
-        self.__find_ft_with_mro()
+        self.is_abort = m.is_dataclass_instance(self.field_value)
+        if not self.is_abort:
+            self.__find_ft_with_mro()
 
     def __str__(self):
         return f"<class 'Field_.{self.field_name}'>"
