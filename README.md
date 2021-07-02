@@ -4,8 +4,7 @@
 [![VERSION](https://img.shields.io/github/v/release/Shadow-linux/ex_dataclass)](https://img.shields.io/github/v/release/Shadow-linux/ex_dataclass)
 [![PYPI](https://img.shields.io/pypi/v/ex-dataclass)](https://img.shields.io/pypi/v/ex-dataclass)
 [![LANGUAGE](https://img.shields.io/badge/python-3.7%2B-blue)](https://img.shields.io/badge/python-3.7%2B-blue)
-[![BUILD](https://img.shields.io/github/checks-status/Shadow-linux/ex_dataclass/master?color=red)](https://img.shields.io/github/checks-status/Shadow-linux/ex_dataclass/master?color=red)
-
+[![CODEBEAT]](https://img.shields.io/badge/codebeat-4.00-success)(https://img.shields.io/badge/codebeat-4.00-success)
 ### ex_dataclass 是什么？
 
 * 它一款继基于 `dataclass` 开发的 `python` 库，但对数据模型处理更加的友好。它通过  **Python3类型注解** 能轻易的处理 `dict` 与自定义 `class` 间的转换，从而明确复杂数据模型的类型，降低维护代码的压力及理清编码思路等作用。
@@ -33,6 +32,7 @@
 - [x] 支持typing.Union 和 typing.Type 特殊容器类型相互嵌套场景 
 - [ ] 支持类型注解作用于值的校验，类似参数签名，若不正确引发异常
 - [ ] 支持 `ex_dataclass` 类型全属性字段名一一对应检测，若不正确引发异常
+
 
 ### 快速开始
 
@@ -110,6 +110,11 @@ print(all_team.teams[0].users)
 # [User(name='', age=18), User(name='', age=18)]
 print(all_team.teams[0].users[0].name)
 # zhangsan
+
+# 重新转回字典
+print(asdict(all_team))
+# {'teams': [{'team_name': 'Team-A', 'users': [{'name': 'zhangsan', 'age': 18}, {'name': 'lisi', 'age': 18}]}, {'team_name': 'Team-B', 'users': [{'name': 'jack', 'age': 18}, {'name': 'rose', 'age': 18}]}]}
+
 
 ```
 
