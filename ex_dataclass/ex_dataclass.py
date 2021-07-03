@@ -42,9 +42,6 @@ def __process_e_class(c_class: typing.Type, **kwargs):
             kwargs.pop(p)
 
     e_class: typing.Type = dataclass(c_class, **kwargs)
-
-    if not hasattr(e_class, '__annotations__'):
-        raise Exception(f"{e_class} missing required attribute. Did you forget to define attributes ?")
     o_init = e_class.__init__
 
     def __init__(self, *args, **kwargs):
