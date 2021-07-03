@@ -83,4 +83,8 @@ class EXPack:
     def json_dumps(self) -> str:
         return json.dumps(asdict(self))
 
+    def pprint(self):
+        import pprint
+        pprint.pprint(asdict(self))
+
 

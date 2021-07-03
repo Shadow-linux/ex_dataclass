@@ -2,11 +2,11 @@ import json
 import typing
 from ex_dataclass.ex_dataclass import ex_dataclass, asdict, field, Field_, EXPack
 
-
 print("=" * 50 + " basic " + "=" * 50)
 
 name = str
 age = int
+
 
 @ex_dataclass(ex_debug=False)
 class ExampleA:
@@ -16,6 +16,7 @@ class ExampleA:
     int_: int = field(default_factory=int)
     str_: str = field(default_factory=str)
     float_: float = field(default_factory=float)
+    bool_: bool = field(default_factory=bool)
     list_: list = field(default_factory=list)
     dict_: dict = field(default_factory=dict)
     t_list_1: typing.List[str] = field(default_factory=list)
@@ -27,6 +28,7 @@ example_a = ExampleA(**{
     "int_"    : 1,
     "str_"    : "1",
     "float_"  : 0.1,
+    "bool_"   : True,
     "list_"   : [1, 2],
     "dict_"   : {"a": 1, "b": 2},
     "t_list_1": ["1", "2", "3"],
@@ -456,14 +458,14 @@ class TypingUnionNestTypingType(EXPack):
     # expect TypeB
     test3: typing.Union[TypeA, TypeType, TypeB, UnionA] = field(default_factory=TypeB)
     # expect TypeA,TypeB
-    test4: typing.List[typing.Union[typing.Type[TypeType], UnionA]]  = field(default_factory=list)
+    test4: typing.List[typing.Union[typing.Type[TypeType], UnionA]] = field(default_factory=list)
 
 
 data = {
     "test1": {"a1": 1, "a2": 2},
     "test2": {"a1": 1, "a2": 2, "t1": 1},
     "test3": {"b1": 1, "b2": 2, "t1": 1},
-    "test4": [{"a1": 1, "a2": 2, "t1": 1},  {"b1": 1, "b2": 2, "t1": 1}]
+    "test4": [{"a1": 1, "a2": 2, "t1": 1}, {"b1": 1, "b2": 2, "t1": 1}]
 }
 tuntt = TypingUnionNestTypingType(**data)
 print(tuntt)
@@ -472,5 +474,3 @@ assert type(tuntt.test2) == TypeA, True
 assert type(tuntt.test3) == TypeB, True
 assert type(tuntt.test4[0]) == TypeA, True
 assert type(tuntt.test4[1]) == TypeB, True
-
-

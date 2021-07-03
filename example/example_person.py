@@ -143,3 +143,10 @@ print(rose.details.phone)
 # 123456789
 # Rose(name='rose', age=18, height=1.68, weight=98.0, gender='female', details=PersonDetails(address='xxxx', hobbies=['aa', 'bb', 'cc'], phone='987654321'))
 # 987654321
+
+
+@ex_dataclass
+class A:
+    pass
+
+print(asdict(A()))
