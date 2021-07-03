@@ -1,3 +1,11 @@
+# ex_dataclass
+
+[![LICENSE](https://img.shields.io/github/license/Shadow-linux/ex_dataclass)](https://img.shields.io/github/license/Shadow-linux/ex_dataclass)
+[![VERSION](https://img.shields.io/github/v/release/Shadow-linux/ex_dataclass)](https://img.shields.io/github/v/release/Shadow-linux/ex_dataclass)
+[![PYPI](https://img.shields.io/pypi/v/ex-dataclass)](https://img.shields.io/pypi/v/ex-dataclass)
+[![LANGUAGE](https://img.shields.io/badge/python-3.7%2B-blue)](https://img.shields.io/badge/python-3.7%2B-blue)
+[![CODEBEAT](https://img.shields.io/badge/codebeat-4.00-success)](https://img.shields.io/badge/codebeat-4.00-success)
+
 ### ex_dataclass 是什么？
 
 * 它一款继基于 `dataclass` 开发的 `python` 库，但对数据模型处理更加的友好。它通过  **Python3类型注解** 能轻易的处理 `dict` 与自定义 `class` 间的转换，从而明确复杂数据模型的类型，降低维护代码的压力及有效降低操作复杂数据难度。
@@ -38,29 +46,6 @@
 import typing
 from ex_dataclass import ex_dataclass, asdict, field, EXPack
 
-
-@ex_dataclass
-class User:
-    # default_factory: 需要给一个类（可callable）
-    name: str = field(default_factory=str)
-    # default: 给定一个默认值
-    age: int = field(default=0)
-
-
-@ex_dataclass
-class Team:
-    team_name: str = field(default_factory=str)
-    # 没有值时，我们设置一个list给users字段
-    users: typing.List[User] = field(default_factory=list)
-
-
-@ex_dataclass
-class AllTeam:
-    teams: typing.List[Team] = field(default_factory=list)
-
-
-# 看看TeamUser 接受参数或字典
-
 data = {
     "teams": [
         {
@@ -91,6 +76,30 @@ data = {
         }
     ]
 }
+
+
+@ex_dataclass
+class User:
+    # default_factory: 需要给一个类（可callable）
+    name: str = field(default_factory=str)
+    # default: 给定一个默认值
+    age: int = field(default=0)
+
+
+@ex_dataclass
+class Team:
+    team_name: str = field(default_factory=str)
+    # 没有值时，我们设置一个list给users字段
+    users: typing.List[User] = field(default_factory=list)
+
+
+@ex_dataclass
+class AllTeam:
+    teams: typing.List[Team] = field(default_factory=list)
+
+
+# 看看TeamUser 接受参数或字典
+
 all_team = AllTeam(**data)
 # 可以看到运行结果，所有类型都被转换成对象，对象在python中是非常的友好可以进行全方位自动补全，并且方便维护；
 print(all_team)
