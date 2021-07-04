@@ -2,6 +2,7 @@
 ex_dataclass
 """
 import json
+import threading
 import typing
 import asyncio
 from ex_dataclass import m
@@ -24,20 +25,15 @@ __all__ = [
 ]
 
 EX_DEBUG = "ex_debug"
-EX_CONCURRENT_ON = "ex_concurrent_on"
-EX_CHECK_VALIDATE_TYPE = "ex_check_validate_type"
 
 EX_DATACLASS_PARAMS = [
     EX_DEBUG,
-    EX_CHECK_VALIDATE_TYPE
 ]
-
 
 
 def __process_e_class(c_class: typing.Type, **kwargs):
     # ex_dataclass params
     debug = kwargs.get(EX_DEBUG, False)
-    check_validate_type = kwargs.get('check_validate_type', False)
 
     # pure dataclass kwargs
     kwas = kwargs.keys()
