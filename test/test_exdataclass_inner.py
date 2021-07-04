@@ -1,5 +1,7 @@
 import json
 import typing
+
+from ex_dataclass import FieldRequiredError
 from ex_dataclass.ex_dataclass import ex_dataclass, asdict, field, Field_, EXPack
 
 print("=" * 50 + " basic " + "=" * 50)
@@ -44,7 +46,7 @@ print("=" * 50 + " inherit " + "=" * 50)
 
 
 @ex_dataclass
-class ExBasicA0(EXPack):
+class ExBasicA0:
     a_0_1: int = field(default_factory=int)
 
 
@@ -55,12 +57,12 @@ class ExBasicA(ExBasicA0):
 
 
 @ex_dataclass
-class ExBasicB(ExBasicA):
+class ExBasicB(ExBasicA, EXPack):
     b_1: str = field(default_factory=str)
 
 
 d = {
-    "a_0_1": 1,
+    "a_0_1": 2,
     "b_1"  : "b1",
     "a_1"  : "a1",
     "a_2"  : "a2",
@@ -69,7 +71,7 @@ d_str = json.dumps(d)
 ex_basic_b = ExBasicB(**d)
 print(ex_basic_b)
 assert ex_basic_b.a_1 == "a1", True
-print(asdict(ex_basic_b))
+print(ex_basic_b.asdict())
 
 print()
 print("=" * 50 + " custom type " + "=" * 50)
@@ -87,8 +89,8 @@ class ExTypeB:
     b2: int = field(default_factory=int)
 
 
-@ex_dataclass(ex_debug=True)
-class ExTypeC:
+@ex_dataclass(ex_debug=False)
+class ExTypeC(EXPack):
     c_a: ExTypeA = field(default_factory=ExTypeA)
     c_b: ExTypeB = field(default_factory=ExTypeB)
     c_list_a: typing.List[ExTypeA] = field(default_factory=list)
@@ -138,6 +140,7 @@ assert ex_type_c.c_a.a1 == "1", True
 assert ex_type_c.c_b.b1 == 1, True
 assert ex_type_c.c_list_a[0].a1 == "1", True
 assert type(ex_type_c.c_list_c[0]) == ExBasicB, True
+print(ex_type_c.asdict())
 
 print()
 # 多类型下自动选择最优解，优先级从左到右
@@ -476,3 +479,34 @@ assert type(tuntt.test4[0]) == TypeA, True
 assert type(tuntt.test4[1]) == TypeB, True
 
 print(dir(tuntt))
+
+
+print()
+print("=" * 50 + " field params " + "=" * 50)
+@ex_dataclass
+class TestFieldParams:
+
+    t_required: str = field(default_factory=str, required=True)
+
+
+@ex_dataclass
+class TestFieldParams1(EXPack):
+
+    t_required: str = field(default_factory=str, required=False)
+
+
+
+data = {}
+try:
+    TestFieldParams(**data)
+except FieldRequiredError as e:
+    print(e)
+
+data = {
+    "t_required": "1"
+}
+tfp = TestFieldParams1(**data)
+print(tfp)
+assert tfp.t_required == "1", True
+
+

@@ -16,7 +16,7 @@ complex_data = {
     "msg_type": "post",
     "content" : {
         "post": {
-            # "en_us": {},
+            "en_us": {},
             "zh_cn": {
                 "title"  : "我是一个标题",
                 "content": [
@@ -122,11 +122,11 @@ class ZhCnContent(PostContent):
     # content: typing.List[typing.List[typing.Union[TagA, TagAt, TagImg, TagText]]] = field(default_factory=list)
 
 
-@ex_dataclass(ex_debug=True)
+@ex_dataclass(ex_debug=False)
 class PostLangOption:
     # 如果默认值是想留空，给dict即可；否则给ZhCnContent
     zh_cn: ZhCnContent = field(default_factory=dict)
-    en_us: EnUsContent = field(default_factory=dict, required=True)
+    en_us: EnUsContent = field(default_factory=dict, required=False)
 
 
 @ex_dataclass
@@ -134,7 +134,7 @@ class MsgTypePost:
     post: PostLangOption = field(default_factory=PostLangOption)
 
 
-@ex_dataclass(ex_debug=True)
+@ex_dataclass(ex_debug=False)
 class SendMessageReq(EXPack):
     email: str = field(default_factory=str)
     msg_type: str = field(default_factory=str)

@@ -9,7 +9,8 @@ from ex_dataclass.m import dataclass
 from ex_dataclass.type_ import Field_
 from ex_dataclass.core import Core
 from ex_dataclass.xpack import EXPack, asdict, asdict_func_type
-from ex_dataclass.ex_field import field, get_field_witch_cls
+from ex_dataclass.ex_field import field, get_field_witch_cls, check_field_is_required
+from ex_dataclass.error import FieldRequiredError
 
 __all__ = [
     'field',
@@ -19,6 +20,7 @@ __all__ = [
     'asdict_func_type',
     'EXPack',
     'Field_',
+    'FieldRequiredError',
 ]
 
 EX_DEBUG = "ex_debug"
@@ -29,6 +31,7 @@ EX_DATACLASS_PARAMS = [
     EX_DEBUG,
     EX_CHECK_VALIDATE_TYPE
 ]
+
 
 
 def __process_e_class(c_class: typing.Type, **kwargs):
@@ -50,6 +53,11 @@ def __process_e_class(c_class: typing.Type, **kwargs):
         # finally kwargs
         nv_kwargs = {}
         props_map = {}
+        kwargs_fname_list: typing.List[m.F_NAME] = kwargs.keys()
+
+        # check field required params
+        for f_name, ex_field in getattr(e_class, '__dataclass_fields__').items():
+            check_field_is_required(e_class.__name__, ex_field, kwargs_fname_list)
 
         for field_name, field_value in kwargs.items():
             # find field type

@@ -87,10 +87,10 @@ class Field_:
         self.is_typing_union = False
         self.is_typing_type = False
 
-        # abort or ommit is abort function
+        # abort  abort function
         self.is_abort = False
+        # if is dataclass instance that will be ignored
         self.is_abort = m.is_dataclass_instance(self.field_value)
-        self.__handle_ofiled_params()
 
         if not self.is_abort:
             self.__find_ft_with_mro()
@@ -139,16 +139,6 @@ class Field_:
     def __ft_is_typing_type(self) -> (m.F_TYPE, bool):
         self.is_typing_type = is_typing_type(self.field_type)
         return m.TypingType, self.is_typing_type
-
-
-    def __handle_ofiled_params(self):
-        if self.__outside_field:
-            if self.__outside_field.required:
-                if not self.field_value or self.field_value == EMPTY:
-                    raise Exception(f"{self} must be required, value is empty or none.")
-            if self.__outside_field.omit_empty:
-                if not self.field_value or self.field_value == EMPTY:
-                    self.is_abort = True
 
     @property
     def outside_field(self) -> ExField:

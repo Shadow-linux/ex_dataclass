@@ -2,8 +2,8 @@
 wrap ex_dataclass field
 """
 import typing
-from dataclasses import MISSING
-from dataclasses import Field
+from dataclasses import MISSING, Field
+from ex_dataclass import m, error
 
 __all__ = [
     'ExField',
@@ -18,7 +18,6 @@ class ExField(Field):
                  'default',
                  'default_factory',
                  'required',
-                 'omit_empty',
                  'repr',
                  'hash',
                  'init',
@@ -27,10 +26,9 @@ class ExField(Field):
                  '_field_type',  # Private: not to be used by user code.
                  )
 
-    def __init__(self, default, default_factory, required, omit_empty, init, repr, hash, compare,
+    def __init__(self, default, default_factory, required, init, repr, hash, compare,
                  metadata):
         self.required = required
-        self.omit_empty = omit_empty
 
         self._field_type = None
         super().__init__(default, default_factory, init, repr, hash, compare,
@@ -59,16 +57,22 @@ class ExField(Field):
 
 
 # # todo 后续会增加is_validate 标识开启 validate 校验
-def field(*, default=MISSING, default_factory=MISSING, required=False, omit_empty=False, init=True, repr=True,
+def field(*, default=MISSING, default_factory=MISSING, required=False, init=True, repr=True,
           hash=None, compare=True, metadata=None):
     """Return an object to identify dataclass fields.
     """
 
     if default is not MISSING and default_factory is not MISSING:
         raise ValueError('cannot specify both default and default_factory')
-    return ExField(default, default_factory, required, omit_empty, init, repr, hash, compare,
+    return ExField(default, default_factory, required, init, repr, hash, compare,
                    metadata)
 
 
 def get_field_witch_cls(cls: typing.Callable, key: str) -> typing.Optional[ExField]:
     return getattr(cls, '__dataclass_fields__').get(key)
+
+
+def check_field_is_required(cls_name: str, f: ExField, f_name_list: typing.List[m.F_NAME]):
+    if f.required:
+        if f.name not in f_name_list:
+            raise error.FieldRequiredError(f"<class '{cls_name}'>.{f.name}")

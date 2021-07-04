@@ -69,10 +69,6 @@ class EXPack:
         self.ex_debug = debug
         return self
 
-    @classmethod
-    def dict_loads(cls, data: dict):
-        return cls(**data)
-
     def asdict(self) -> typing.Dict:
         return asdict(self)
 
