@@ -4,7 +4,7 @@
 [![VERSION](https://img.shields.io/github/v/release/Shadow-linux/ex_dataclass)](https://img.shields.io/github/v/release/Shadow-linux/ex_dataclass)
 [![PYPI](https://img.shields.io/pypi/v/ex-dataclass)](https://img.shields.io/pypi/v/ex-dataclass)
 [![LANGUAGE](https://img.shields.io/badge/python-3.7%2B-blue)](https://img.shields.io/badge/python-3.7%2B-blue)
-[![CODEBEAT](https://img.shields.io/badge/codebeat-4.00-success)](https://img.shields.io/badge/codebeat-4.00-success)
+[![codebeat badge](https://codebeat.co/badges/495b3202-92b5-4301-8afd-1e146e62fe3e)](https://codebeat.co/projects/github-com-shadow-linux-ex_dataclass-master)
 
 ### ex_dataclass 是什么？
 
