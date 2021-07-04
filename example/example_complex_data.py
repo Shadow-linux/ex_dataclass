@@ -122,11 +122,11 @@ class ZhCnContent(PostContent):
     # content: typing.List[typing.List[typing.Union[TagA, TagAt, TagImg, TagText]]] = field(default_factory=list)
 
 
-@ex_dataclass
+@ex_dataclass(ex_debug=False)
 class PostLangOption:
     # 如果默认值是想留空，给dict即可；否则给ZhCnContent
     zh_cn: ZhCnContent = field(default_factory=dict)
-    en_us: EnUsContent = field(default_factory=dict)
+    en_us: EnUsContent = field(default_factory=dict, required=False)
 
 
 @ex_dataclass
@@ -134,8 +134,8 @@ class MsgTypePost:
     post: PostLangOption = field(default_factory=PostLangOption)
 
 
-@ex_dataclass
-class SendMessageReq:
+@ex_dataclass(ex_debug=False)
+class SendMessageReq(EXPack):
     email: str = field(default_factory=str)
     msg_type: str = field(default_factory=str)
     open_id: str = field(default_factory=str)
@@ -152,3 +152,4 @@ assert type(send_msg_req_1.content.post.zh_cn.content[0][0]) == TagText, True
 assert type(send_msg_req_1.content.post.zh_cn.content[0][1]) == TagA, True
 assert type(send_msg_req_1.content.post.zh_cn.content[0][2]) == TagAt, True
 assert type(send_msg_req_1.content.post.zh_cn.content[2][0]) == TagImg, True
+print(send_msg_req_1.asdict())
