@@ -15,7 +15,7 @@ from . import m
 
 
 # transfer function type
-def asdict_xxxFieldName(field: Field_) -> m.f_value:
+def asdict_xxxFieldName(field: Field_) -> m.F_VALUE:
     pass
 
 asdict_func_type = asdict_xxxFieldName
@@ -58,10 +58,10 @@ class EXPack:
     __slots__ = ['fields', 'ex_debug']
 
     def __init__(self, *args, **kwargs):
-        self.fields: typing.Dict[m.f_name, Field_] = {}
+        self.fields: typing.Dict[m.F_NAME, Field_] = {}
         self.ex_debug = False
 
-    def _set_properties(self, fields: typing.Dict[m.f_name, Field_] = None) -> 'EXPack':
+    def _set_properties(self, fields: typing.Dict[m.F_NAME, Field_] = None) -> 'EXPack':
         self.fields = fields
         return self
 

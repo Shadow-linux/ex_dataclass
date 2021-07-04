@@ -474,3 +474,5 @@ assert type(tuntt.test2) == TypeA, True
 assert type(tuntt.test3) == TypeB, True
 assert type(tuntt.test4[0]) == TypeA, True
 assert type(tuntt.test4[1]) == TypeB, True
+
+print(dir(tuntt))

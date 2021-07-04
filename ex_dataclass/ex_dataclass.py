@@ -5,10 +5,11 @@ import json
 import typing
 import asyncio
 from ex_dataclass import m
-from ex_dataclass.m import dataclass, field
+from ex_dataclass.m import dataclass
 from ex_dataclass.type_ import Field_
 from ex_dataclass.core import Core
 from ex_dataclass.xpack import EXPack, asdict, asdict_func_type
+from ex_dataclass.ex_field import field, get_field_witch_cls
 
 __all__ = [
     'field',
@@ -54,7 +55,12 @@ def __process_e_class(c_class: typing.Type, **kwargs):
             # find field type
             field_type = e_class.__annotations__.get(field_name, None)
 
-            f_ = Field_(e_class=e_class, field_name=field_name, field_value=field_value, field_type=field_type)
+            f_ = Field_(e_class=e_class,
+                        field_name=field_name,
+                        field_value=field_value,
+                        field_type=field_type,
+                        o_field=get_field_witch_cls(e_class, field_name)
+                        )
             if debug: print(f_)
 
             f_.build()
@@ -78,6 +84,7 @@ def __process_e_class(c_class: typing.Type, **kwargs):
         print(f"---- {e_class} ----")
 
     return e_class
+
 
 # main
 def ex_dataclass(_cls=None, *, ex_debug=False, init=True, repr=True, eq=True, order=False,
