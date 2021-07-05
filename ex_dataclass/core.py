@@ -26,15 +26,15 @@ class _FieldTyping(m.ToolImpl, metaclass=ABCMeta):
             print(f"{self.f}.attr_field_types: {attr_field_types}")
         return attr_field_types
 
-    def get_ft_attr(self, ft: m.DataClassType) -> typing.Dict[m.f_name, m.f_type]:
+    def get_ft_attr(self, ft: m.DataClassType) -> typing.Dict[m.F_NAME, m.F_TYPE]:
         return ft.__dict__['__annotations__']
 
-    def __calculate_best_chosen(self, ft: m.f_type, max_score: int) -> typing.Tuple[m.f_type, int]:
+    def __calculate_best_chosen(self, ft: m.F_TYPE, max_score: int) -> typing.Tuple[m.F_TYPE, int]:
         score = 0
 
         if is_dataclass(ft):
             # others
-            # get DataClassType's attributes, return data format: typing.Dict[name, f_type]
+            # get DataClassType's attributes, return data format: typing.Dict[name, F_TYPE]
             attr_dict = self.get_ft_attr(ft)
             # compare 'DataClassType',  which has the most attribute
             for key, value in self.f.field_value.items():
@@ -175,7 +175,7 @@ class IteratorImplement(m.ToolImpl):
         self.__layer_container_types: typing.List[str] = []
         # recognize the first filed type
         self.__recognize_layer_type(self.f.field_type)
-        self.__container_attr_type: m.f_type = self.__find_the_container_attribute_type(self.f.field_type)
+        self.__container_attr_type: m.F_TYPE = self.__find_the_container_attribute_type(self.f.field_type)
         self.__layer_amount: int = 0
         # container attribute type
         self.__cat_isdataclass = False
@@ -184,7 +184,7 @@ class IteratorImplement(m.ToolImpl):
 
     # find the deepest attribute_type like: typing.List[typing.List[<DataClassType>]]
     # we should find the <DataClassType>
-    def __find_the_container_attribute_type(self, ft: m.f_type) -> typing.Optional[m.f_type]:
+    def __find_the_container_attribute_type(self, ft: m.F_TYPE) -> typing.Optional[m.F_TYPE]:
         attr_field_types = ft.__dict__.get('__args__', ())
         if self.debug:
             print(f"{self.f}.attr_field_types: {attr_field_types}")
@@ -206,12 +206,12 @@ class IteratorImplement(m.ToolImpl):
                 return True
         return False
 
-    def __handle_typing_union(self, f: Field_) -> typing.Optional[m.f_type]:
+    def __handle_typing_union(self, f: Field_) -> typing.Optional[m.F_TYPE]:
         ftu = FieldTypingUnion.with_debug(self.debug, f)
         ftu.handle()
         return ftu.smart_ft
 
-    def __handle_typing_type(self, f: Field_) -> typing.Optional[m.f_type]:
+    def __handle_typing_type(self, f: Field_) -> typing.Optional[m.F_TYPE]:
         ftt = FieldTypingType.with_debug(self.debug, f)
         ftt.handle()
         return ftt.smart_ft
@@ -335,6 +335,8 @@ class Core:
             print(f"{f}.type_name: {f.type_name}")
             print(f"{f}.field_type: {f.field_type}")
             print(f"{f}.field_value: {f.field_value}")
+            print(f"{f}.o_filed.required {f.outside_field.required}")
+
 
         for h in (
                 cls.handle_dataclass_type,
