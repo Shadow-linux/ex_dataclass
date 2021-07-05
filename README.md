@@ -151,7 +151,7 @@ class PersonDetails:
     phone: str = field(default_factory=str)
 
 
-# 继承person使其拥有person的熟悉
+# 继承person使其拥有person的属性
 @ex_dataclass
 class Male(Person):
     gender: str = field(default="male")
@@ -223,9 +223,6 @@ print(rose.details.phone)
 
 
 请移步: [文档]()
-
-
-### 文档
 
 
 ### 联系方式
