@@ -3,7 +3,7 @@ import requests
 import setuptools
 
 PROJECT_NAME = "ex_dataclass"
-VERSION = "1.0.3"
+VERSION = "1.0.4"
 AUTHOR = "ShadowYD"
 E_MAIL = "972367265@qq.com"
 GIT_URL= "https://github.com/Shadow-linux/ex_dataclass"
@@ -34,7 +34,7 @@ def description() -> str:
 
 
 def long_description() -> str:
-    md_to_rst(READ_ME, READ_ME_RST)
+    # md_to_rst(READ_ME, READ_ME_RST)
     with open(READ_ME_RST, "r") as fd:
         content = fd.read()
         return content
