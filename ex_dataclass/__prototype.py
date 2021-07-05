@@ -1,5 +1,5 @@
 """
-最初始的版本
+最初始的版本，留作纪念
 """
 import json
 from dataclasses import dataclass, is_dataclass

@@ -67,7 +67,7 @@ complex_data = {
 }
 
 
-# 从上面的数据可以看到有3种不同tag的数据类型，但其实都是content, 下面看看怎么定义
+# 从上面的数据可以看到有4种不同tag的数据类型，但其实都是content, 下面看看怎么定义
 @ex_dataclass
 class TagBasic:
     tag: str = field(default_factory=str)
@@ -152,4 +152,5 @@ assert type(send_msg_req_1.content.post.zh_cn.content[0][0]) == TagText, True
 assert type(send_msg_req_1.content.post.zh_cn.content[0][1]) == TagA, True
 assert type(send_msg_req_1.content.post.zh_cn.content[0][2]) == TagAt, True
 assert type(send_msg_req_1.content.post.zh_cn.content[2][0]) == TagImg, True
-print(send_msg_req_1.asdict())
+send_msg_req_1.pprint()
+
