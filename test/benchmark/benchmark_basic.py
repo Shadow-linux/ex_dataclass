@@ -1,6 +1,6 @@
 from time import perf_counter as pc
 from ex_dataclass.ex_dataclass import ex_dataclass, typing, field
-from ex_dataclass.xpack import EXPack
+from ex_dataclass.xpack import EXpack
 
 b_file_1 = "basic_1.json"
 b_file_1000 = "basic_1000.json"
@@ -41,7 +41,7 @@ class Exper(Exper1):
     ex3: str = field(default_factory=str)
 
 @ex_dataclass
-class Person(EXPack):
+class Person(EXpack):
 
     user_id: int = field(default_factory=int)
     user_name: str = field(default_factory=str)
@@ -51,7 +51,7 @@ class Person(EXPack):
     experience: typing.List[Exper] = field(default_factory=list)
 
 @ex_dataclass
-class Data(EXPack):
+class Data(EXpack):
 
      data: typing.List[Person] = field(default_factory=list)
 

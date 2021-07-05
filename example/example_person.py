@@ -1,5 +1,5 @@
 import typing
-from ex_dataclass import ex_dataclass, asdict, field, EXPack
+from ex_dataclass import ex_dataclass, asdict, field, EXpack
 
 
 @ex_dataclass

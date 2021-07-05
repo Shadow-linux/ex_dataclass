@@ -3,7 +3,7 @@
 本次例子都来源于飞书开发平台，飞书拥有很强大的且灵活的api，所以配置的数据也相对复杂；
 """
 import typing
-from ex_dataclass import ex_dataclass, asdict, field, EXPack
+from ex_dataclass import ex_dataclass, asdict, field, EXpack
 
 # ============================================= 示例一 =============================================
 
@@ -135,7 +135,7 @@ class MsgTypePost:
 
 
 @ex_dataclass(ex_debug=False)
-class SendMessageReq(EXPack):
+class SendMessageReq(EXpack):
     email: str = field(default_factory=str)
     msg_type: str = field(default_factory=str)
     open_id: str = field(default_factory=str)

@@ -2,7 +2,7 @@ import json
 import typing
 
 from ex_dataclass import FieldRequiredError
-from ex_dataclass.ex_dataclass import ex_dataclass, asdict, field, Field_, EXPack
+from ex_dataclass.ex_dataclass import ex_dataclass, asdict, field, Field_, EXpack
 
 print("=" * 50 + " basic " + "=" * 50)
 
@@ -57,7 +57,7 @@ class ExBasicA(ExBasicA0):
 
 
 @ex_dataclass
-class ExBasicB(ExBasicA, EXPack):
+class ExBasicB(ExBasicA, EXpack):
     b_1: str = field(default_factory=str)
 
 
@@ -90,7 +90,7 @@ class ExTypeB:
 
 
 @ex_dataclass(ex_debug=False)
-class ExTypeC(EXPack):
+class ExTypeC(EXpack):
     c_a: ExTypeA = field(default_factory=ExTypeA)
     c_b: ExTypeB = field(default_factory=ExTypeB)
     c_list_a: typing.List[ExTypeA] = field(default_factory=list)
@@ -307,7 +307,7 @@ print("=" * 50 + " typing list recursive " + "=" * 50)
 
 
 @ex_dataclass(ex_debug=False)
-class ExampleTListRecursive(EXPack):
+class ExampleTListRecursive(EXpack):
     tl1: typing.List[typing.List[int]] = field(default_factory=list)
     tl2: typing.List[typing.List[typing.List[int]]] = field(default_factory=list)
     tl3: typing.List[typing.List[ExTypeB]] = field(default_factory=list)
@@ -349,7 +349,7 @@ print("=" * 50 + " with EXPack " + "=" * 50)
 
 
 @ex_dataclass(ex_debug=False)
-class ExampleWithMetaClass(EXPack):
+class ExampleWithMetaClass(EXpack):
     """
     test type: int, str, float, list, dict, typing.List, typing.Dict
     """
@@ -397,7 +397,7 @@ class NormalClass:
 
 
 @ex_dataclass
-class ExampleDatetime(EXPack):
+class ExampleDatetime(EXpack):
     dd: datetime.datetime = field(default=datetime.datetime.now())
     a1: int = field(default_factory=int)
     # normal class
@@ -453,7 +453,7 @@ class TypeB(TypeType):
 
 
 @ex_dataclass(ex_debug=False)
-class TypingUnionNestTypingType(EXPack):
+class TypingUnionNestTypingType(EXpack):
     # expect UnionA
     test1: typing.Union[UnionA, typing.Type[TypeType]] = field(default_factory=UnionA)
     # expect TypeA
@@ -490,7 +490,7 @@ class TestFieldParams:
 
 
 @ex_dataclass
-class TestFieldParams1(EXPack):
+class TestFieldParams1(EXpack):
 
     t_required: str = field(default_factory=str, required=False)
 

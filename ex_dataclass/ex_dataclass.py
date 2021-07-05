@@ -9,7 +9,7 @@ from ex_dataclass import m
 from ex_dataclass.m import dataclass
 from ex_dataclass.type_ import Field_
 from ex_dataclass.core import Core
-from ex_dataclass.xpack import EXPack, asdict, asdict_func_type
+from ex_dataclass.xpack import EXpack, asdict, asdict_func_type
 from ex_dataclass.ex_field import field, get_field_witch_cls, check_field_is_required
 from ex_dataclass.error import FieldRequiredError
 
@@ -19,7 +19,7 @@ __all__ = [
     'typing',
     'ex_dataclass',
     'asdict_func_type',
-    'EXPack',
+    'EXpack',
     'Field_',
     'FieldRequiredError',
 ]

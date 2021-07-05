@@ -49,7 +49,7 @@ def __asdict_inner(obj, dict_factory):
         return copy.deepcopy(obj)
 
 
-class EXPack:
+class EXpack:
 
     # identification
     __ex_pack_field__ = m.EXPackField
@@ -61,11 +61,11 @@ class EXPack:
         self.fields: typing.Dict[m.F_NAME, Field_] = {}
         self.ex_debug = False
 
-    def _set_properties(self, fields: typing.Dict[m.F_NAME, Field_] = None) -> 'EXPack':
+    def _set_properties(self, fields: typing.Dict[m.F_NAME, Field_] = None) -> 'EXpack':
         self.fields = fields
         return self
 
-    def _with_debug(self, debug: bool) -> 'EXPack':
+    def _with_debug(self, debug: bool) -> 'EXpack':
         self.ex_debug = debug
         return self
 
