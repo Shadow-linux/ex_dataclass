@@ -1,4 +1,5 @@
 import typing
+import requests
 import setuptools
 
 PROJECT_NAME = "ex_dataclass"
@@ -7,7 +8,25 @@ AUTHOR = "ShadowYD"
 E_MAIL = "972367265@qq.com"
 GIT_URL= "https://github.com/Shadow-linux/ex_dataclass"
 
-READ_ME = "README.md"
+READ_ME = "README_PYPI.md"
+READ_ME_RST = "README.rst"
+
+
+def md_to_rst(from_file, to_file):
+    """
+    将markdown格式转换为rst格式
+    @param from_file: {str} markdown文件的路径
+    @param to_file: {str} rst文件的路径
+    """
+    response = requests.post(
+        url='http://c.docverter.com/convert',
+        data={'to': 'rst', 'from': 'markdown'},
+        files={'input_files[]': open(from_file, 'rb')}
+    )
+
+    if response.ok:
+        with open(to_file, "wb") as f:
+            f.write(response.content)
 
 
 def description() -> str:
@@ -15,7 +34,8 @@ def description() -> str:
 
 
 def long_description() -> str:
-    with open(READ_ME, "r") as fd:
+    md_to_rst(READ_ME, READ_ME_RST)
+    with open(READ_ME_RST, "r") as fd:
         content = fd.read()
         return content
 
