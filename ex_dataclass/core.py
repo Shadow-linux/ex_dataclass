@@ -81,11 +81,11 @@ class _FieldTyping(m.ToolImpl, metaclass=ABCMeta):
             # 因为typing.Type是继承关系，所以score需要继承
             if not is_typing_type:
                 tmp_max_score = 0
-            tmp_return_ft, score = self.__calculate_best_chosen(ft, tmp_max_score, max_score)
+            tmp_return_ft, tmp_max_score = self.__calculate_best_chosen(ft, tmp_max_score, max_score)
             if self.debug:
                 print(f"{self.f}.score: {tmp_return_ft}, {tmp_max_score}")
-            if score > max_score:
-                max_score = score
+            if tmp_max_score > max_score:
+                max_score = tmp_max_score
                 return_ft = tmp_return_ft
 
         if self.debug:
