@@ -35,8 +35,8 @@ class _FieldTyping(m.ToolImpl, metaclass=ABCMeta):
         return res
 
     # 适配typing.Type 和 typing.Union 的算法
-    def __calculate_best_chosen(self, ft: m.F_TYPE, score: int, max_score: int) -> typing.Tuple[m.F_TYPE, int]:
-
+    def __calculate_best_chosen(self, ft: m.F_TYPE, max_score: int) -> typing.Tuple[m.F_TYPE, int]:
+        score = 0
         if is_dataclass(ft):
             # others
             # get DataClassType's attributes, return data format: typing.Dict[name, F_TYPE]
@@ -62,13 +62,13 @@ class _FieldTyping(m.ToolImpl, metaclass=ABCMeta):
                                                                 field_value=self.f.field_value,
                                                                 field_name=self.f.field_name))
             ftt.handle()
-            return self.__calculate_best_chosen(ftt.smart_ft, score, max_score)
+            return self.__calculate_best_chosen(ftt.smart_ft, max_score)
 
         return ft, max_score
 
     # get compatibility field type
     def smart_choice_ft(self,
-                        attr_field_types: typing.List[m.DataClassType], is_typing_type=False) -> typing.Optional[
+                        attr_field_types: typing.List[m.DataClassType]) -> typing.Optional[
         m.DataClassType]:
         return_ft: m.DataClassType = None
         max_score = tmp_max_score = 0
@@ -79,9 +79,7 @@ class _FieldTyping(m.ToolImpl, metaclass=ABCMeta):
 
         for ft in attr_field_types:
             # 因为typing.Type是继承关系，所以score需要继承
-            if not is_typing_type:
-                tmp_max_score = 0
-            tmp_return_ft, tmp_max_score = self.__calculate_best_chosen(ft, tmp_max_score, max_score)
+            tmp_return_ft, tmp_max_score = self.__calculate_best_chosen(ft, max_score)
             if self.debug:
                 print(f"{self.f}.score: {tmp_return_ft}, {tmp_max_score}")
             if tmp_max_score > max_score:
@@ -126,7 +124,7 @@ class FieldTypingUnion(_FieldTyping):
     def handle(self) -> typing.Union[m.DataClassObj, typing.Any]:
         attr_field_types = self.get_attr_field_types()
 
-        self.smart_ft = self.smart_choice_ft(list(attr_field_types), is_typing_type=False)
+        self.smart_ft = self.smart_choice_ft(list(attr_field_types))
         if self.smart_ft:
             return self.smart_ft(**self.f.field_value)
 
