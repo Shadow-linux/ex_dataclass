@@ -3,7 +3,7 @@ import requests
 import setuptools
 
 PROJECT_NAME = "ex_dataclass"
-VERSION = "1.0.4"
+VERSION = "1.1.0"
 AUTHOR = "ShadowYD"
 E_MAIL = "972367265@qq.com"
 GIT_URL= "https://github.com/Shadow-linux/ex_dataclass"

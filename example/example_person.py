@@ -4,7 +4,7 @@ from ex_dataclass import ex_dataclass, asdict, field, EXpack
 
 @ex_dataclass
 class User:
-    # default_factory: 需要给一个类（可callable）
+    # default_factory: 需要给一个类（可callable的对象）
     name: str = field(default_factory=str)
     # default: 给定一个默认值
     age: int = field(default=0)
@@ -19,12 +19,14 @@ class Team:
 
 @ex_dataclass
 class AllTeam:
+    id_: int = field(default=0)
     teams: typing.List[Team] = field(default_factory=list)
 
 
 # 看看TeamUser 接受参数或字典
-
-data = {
+all_team = AllTeam(**{
+    # 这个字段并未定义，所以会被忽略
+    "is_active": True,
     "teams": [
         {
             "team_name": "Team-A",
@@ -39,7 +41,7 @@ data = {
                 }
             ]
         },
-{
+        {
             "team_name": "Team-B",
             "users"    : [
                 {
@@ -53,8 +55,7 @@ data = {
             ]
         }
     ]
-}
-all_team = AllTeam(**data)
+})
 # 可以看到运行结果，所有类型都被转换成对象，对象在python中是非常的友好可以进行全方位自动补全，并且方便维护；
 print(all_team)
 # AllTeam(teams=[Team(team_name='Team-A', users=[User(name='', age=18), User(name='', age=18)]), Team(team_name='Team-B', users=[User(name='', age=18), User(name='', age=18)])])

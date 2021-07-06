@@ -15,7 +15,7 @@ from . import m
 
 
 # transfer function type
-def asdict_xxxFieldName(field: Field_) -> m.F_VALUE:
+def asdict_xxxFieldName(value: typing.Any) -> m.F_VALUE:
     pass
 
 asdict_func_type = asdict_xxxFieldName
@@ -33,7 +33,7 @@ def __asdict_inner(obj, dict_factory):
         for f in m.fields(obj):
             asdict_fn: asdict_func_type = getattr(obj, f"{m.AsditFuncPrefix}_{f.name}", None)
             if asdict_fn:
-                value = asdict_fn(obj.fields.get(f.name))
+                value = asdict_fn(getattr(obj, f.name, None))
             else:
                 value = __asdict_inner(getattr(obj, f.name), dict_factory)
             result.append((f.name, value))

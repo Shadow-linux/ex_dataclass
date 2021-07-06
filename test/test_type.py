@@ -1,6 +1,8 @@
 import pprint
 from dataclasses import dataclass, is_dataclass
 
+from ex_dataclass import ex_dataclass
+
 print(dict.__name__)
 print(str.__name__)
 print(set.__name__)
@@ -22,20 +24,21 @@ print(typing.List[typing.List[int]]._name)
 
 
 
+from ex_dataclass import ex_dataclass, asdict, field, EXpack
 
-@dataclass
+@ex_dataclass
 class ExTypeA:
     a1: str = field(default_factory=str)
     a2: str = field(default_factory=str)
 
 
-@dataclass
+@ex_dataclass
 class ExTypeB:
     b1: int = field(default_factory=int)
     b2: int = field(default_factory=int)
 
 
-@dataclass
+@ex_dataclass
 class ExTypeC:
     c_a: ExTypeA = field(default_factory=ExTypeA)
     c_b: ExTypeB = field(default_factory=ExTypeB)

@@ -1,10 +1,8 @@
 """
 需要支持的类型
-typing.Set
-typing.FrozenSet
+
 typing.List
 typing.Dict
-typing.Tuple
 
 typing.Union  // 待定
 typing.Type
@@ -12,11 +10,9 @@ typing.Type
 str
 int
 float
+bool
 list
 dict
-tuple
-set
-frozenset
 """
 import typing
 from . import m
