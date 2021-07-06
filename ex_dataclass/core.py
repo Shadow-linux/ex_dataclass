@@ -26,12 +26,17 @@ class _FieldTyping(m.ToolImpl, metaclass=ABCMeta):
             print(f"{self.f}.attr_field_types: {attr_field_types}")
         return attr_field_types
 
+    # 获取所有的attribute 包括所有的继承属性
     def get_ft_attr(self, ft: m.DataClassType) -> typing.Dict[m.F_NAME, m.F_TYPE]:
-        return ft.__dict__['__annotations__']
+        res: typing.Dict = {}
+        for  cls in ft.__mro__:
+            if m.is_dataclass(cls):
+                res.update(cls.__dict__.get('__annotations__', {}))
+        return res
 
+    # 适配typing.Type 和 typing.Union 的算法
     def __calculate_best_chosen(self, ft: m.F_TYPE, max_score: int) -> typing.Tuple[m.F_TYPE, int]:
         score = 0
-
         if is_dataclass(ft):
             # others
             # get DataClassType's attributes, return data format: typing.Dict[name, F_TYPE]
@@ -43,7 +48,7 @@ class _FieldTyping(m.ToolImpl, metaclass=ABCMeta):
                     # todo 这一个类型断言的方法并不完善，可能影响性能且不能判断全部类型；
                     if attr_ft in type_.BASIC_TYPE_LIST:
                         if isinstance(value, attr_ft):
-                            score += 1.1
+                            score += 2
                     else:
                         score += 1
 
@@ -63,22 +68,26 @@ class _FieldTyping(m.ToolImpl, metaclass=ABCMeta):
 
     # get compatibility field type
     def smart_choice_ft(self,
-                        attr_field_types: typing.List[m.DataClassType]) -> typing.Optional[m.DataClassType]:
+                        attr_field_types: typing.List[m.DataClassType]) -> typing.Optional[
+        m.DataClassType]:
         return_ft: m.DataClassType = None
-        max_score = 0
+        max_score = tmp_max_score = 0
 
         if self.debug:
             print(f"{self.f}.chosen_types: {attr_field_types}")
             print(f"{self.f}.smart_choice_ft.field_value: {self.f.field_value}")
 
         for ft in attr_field_types:
+            # 因为typing.Type是继承关系，所以score需要继承
             tmp_return_ft, tmp_max_score = self.__calculate_best_chosen(ft, max_score)
+            if self.debug:
+                print(f"{self.f}.score: {tmp_return_ft}, {tmp_max_score}")
             if tmp_max_score > max_score:
                 max_score = tmp_max_score
                 return_ft = tmp_return_ft
 
         if self.debug:
-            print(f"{self.f}.smart_choice_ft: {return_ft}, score: {max_score}")
+            print(f"{self.f}.smart_choice_ft: {return_ft}, score: {tmp_max_score}")
 
         return return_ft
 
@@ -99,7 +108,7 @@ class FieldTypingType(_FieldTyping):
         if attr_field_types:
             # get the first generic field type
             generic_field_type = attr_field_types[0]
-            self.smart_ft = self.smart_choice_ft(generic_field_type.__subclasses__() + [generic_field_type])
+            self.smart_ft = self.smart_choice_ft([generic_field_type] + generic_field_type.__subclasses__())
             if self.smart_ft:
                 return self.smart_ft(**self.f.field_value)
 
@@ -221,6 +230,8 @@ class IteratorImplement(m.ToolImpl):
         if self.__cat_isdataclass:
             tmp_value_list = []
             for v in values:
+                if m.is_dataclass_instance(v):
+                    continue
                 tmp_value_list.append(self.__container_attr_type(**v))
 
             return tmp_value_list
@@ -230,24 +241,30 @@ class IteratorImplement(m.ToolImpl):
             tmp_value_list = []
             if type_.is_typing_union(self.__container_attr_type):
                 for idx, v in enumerate(values):
-
-                    ex_ft = self.__handle_typing_union(Field_(e_class=self.f.e_class,
-                                                              field_name=self.f.field_name,
-                                                              field_type=self.__container_attr_type,
-                                                              field_value=values[idx]
-                                                              ).build())
+                    f = Field_(e_class=self.f.e_class,
+                               field_name=self.f.field_name,
+                               field_type=self.__container_attr_type,
+                               field_value=values[idx]
+                               ).build()
+                    if f.is_abort:
+                        tmp_value_list.append(v)
+                        continue
+                    ex_ft = self.__handle_typing_union(f)
                     if ex_ft: tmp_value_list.append(ex_ft(**v))
 
                 return tmp_value_list
 
             if type_.is_typing_type(self.__container_attr_type):
                 for idx, v in enumerate(values):
-
-                    ex_ft = self.__handle_typing_type(Field_(e_class=self.f.e_class,
-                                                             field_name=self.f.field_name,
-                                                             field_type=self.__container_attr_type,
-                                                             field_value=values[idx]
-                                                             ).build())
+                    f = Field_(e_class=self.f.e_class,
+                               field_name=self.f.field_name,
+                               field_type=self.__container_attr_type,
+                               field_value=values[idx]
+                               ).build()
+                    if f.is_abort:
+                        tmp_value_list.append(v)
+                        continue
+                    ex_ft = self.__handle_typing_type(f)
                     if ex_ft: tmp_value_list.append(ex_ft(**v))
 
                 return tmp_value_list
@@ -336,7 +353,6 @@ class Core:
             print(f"{f}.field_type: {f.field_type}")
             print(f"{f}.field_value: {f.field_value}")
             print(f"{f}.o_filed.required {f.outside_field.required}")
-
 
         for h in (
                 cls.handle_dataclass_type,

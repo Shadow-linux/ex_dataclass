@@ -25,6 +25,8 @@ DataClassFields = '__dataclass_fields__'
 AsditFuncPrefix = "asdict"
 
 
+def is_expack(obj) -> bool:
+    return hasattr(obj, EXPackField)
 
 def is_dataclass_instance(obj) -> bool:
     """Returns True if obj is an instance of a dataclass."""

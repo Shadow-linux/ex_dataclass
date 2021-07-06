@@ -258,6 +258,7 @@ print("=" * 50 + " typing type with typing list  " + "=" * 50)
 class ExampleTTypeWithTList:
     # expect typing.List[ExGenericA]
     tl: typing.List[typing.Type[ExGenericBasic]] = field(default_factory=list)
+    tl1: typing.List[ExGenericBasic] = field(default_factory=list)
 
 
 ettwt = ExampleTTypeWithTList(**{
@@ -267,11 +268,25 @@ ettwt = ExampleTTypeWithTList(**{
     }]
 })
 ettwt1 = ExampleTTypeWithTList(**{
-    "tl": []
+    "tl1": [
+        ExGenericA(**{
+        "a1"   : 1,
+        "basic": "a"
+    })
+    ]
+})
+ettwt2 = ExampleTTypeWithTList(**{
+    "tl": [
+        ExGenericA(**{
+        "a1"   : 1,
+        "basic": "a"
+    })
+    ]
 })
 print(ettwt)
 assert type(ettwt.tl[0]) == ExGenericA, True
-assert ettwt1.tl == [], True
+assert type(ettwt1.tl1[0]) == ExGenericA, True
+assert type(ettwt2.tl[0]) == ExGenericA, True
 
 print()
 print("=" * 50 + " typing union with typing list  " + "=" * 50)
@@ -403,13 +418,12 @@ class ExampleDatetime(EXpack):
     # normal class
     nc: NormalClass = field(default_factory=dict)
 
-    def asdict_dd(self, field: Field_) -> object:
+    def asdict_dd(self, value: datetime.datetime) -> object:
         # print(field.field_name, field.field_value, field.field_type, field.type_name)
-        return field.field_value.strftime("%Y-%m-%d")
+        return value.strftime("%Y-%m-%d")
 
-    def asdict_nc(self, field: Field_) -> object:
-        nc: NormalClass = field.field_value
-        return {"user_id": nc.user_id, "username": nc.username}
+    def asdict_nc(self, value: NormalClass) -> object:
+        return {"user_id": value.user_id, "username": value.username}
 
 
 ed = ExampleDatetime(**{

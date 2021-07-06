@@ -3,18 +3,18 @@
 [![LICENSE](https://img.shields.io/github/license/Shadow-linux/ex_dataclass)](https://img.shields.io/github/license/Shadow-linux/ex_dataclass)
 [![VERSION](https://img.shields.io/github/v/release/Shadow-linux/ex_dataclass)](https://img.shields.io/github/v/release/Shadow-linux/ex_dataclass)
 [![PYPI](https://img.shields.io/pypi/v/ex-dataclass)](https://img.shields.io/pypi/v/ex-dataclass)
-[![LANGUAGE](https://img.shields.io/badge/python-3.7%2B-blue)](https://img.shields.io/badge/python-3.7%2B-blue)
+[![LANGUAGE](https://img.shields.io/badge/python-3.6%2B-blue)](https://img.shields.io/badge/python-3.6%2B-blue)
 [![codebeat badge](https://codebeat.co/badges/495b3202-92b5-4301-8afd-1e146e62fe3e)](https://codebeat.co/projects/github-com-shadow-linux-ex_dataclass-master)
 
 ### ex_dataclass 是什么？
 
-* 它一款继基于 `dataclass` 开发的 `python` 库，但对数据模型处理更加的友好。它通过  **Python3类型注解** 能轻易的处理 `dict` 与自定义 `class` 间的转换，从而明确复杂数据模型的类型，降低维护代码的压力及有效降低操作复杂数据难度。
+* `ex_dataclass` 是一款继基于 `dataclass` 开发的 `python` 库并且对数据模型的处理更加友好。它通过  **Python3的类型注解** 特性能轻易的处理 `dict` 转换成自定义 `class` 对象，从而明确复杂数据模型的，**降低**维护代码的压力、**降低**操作复杂数据难度及**提高**代码逻辑清晰度。
 * 它在配合 `Python3 typing` 模块的特殊容器的类型注解能实现更多高级功能；
 
 
 ### 特性
 
-* **注解类型**
+* **注解类型（支持）**
 - [x] **int**
 - [x] **str**
 - [x] **float**
@@ -31,7 +31,7 @@
 - [x] 支持 `typing.List` 中 `ex_dataclass` 类型正反解析；
 - [x] 支持 `typing.List` 嵌套正反解析，如：`{a: [[{a:1, b:2}, {a:3, b:4}]]}`
 - [x] 支持 `typing.Union` 和 `typing.Type` 特殊容器类型注解的多态行为，精确匹配字段存在最多 `ex_dataclass` 类
-- [x] 支持反向解析下存在冗余字段，默认行为是抛弃冗余字段（可进行配置）
+- [x] 支持反向解析下存在冗余字段，并且抛弃该字段
 - [x] 支持typing.Union 和 typing.Type 特殊容器类型相互嵌套场景 
 - [ ] 支持 `ex_dataccass` 字段检测校验，通过类型注解获取类后进行值的校验；
 
@@ -151,7 +151,7 @@ class PersonDetails:
     phone: str = field(default_factory=str)
 
 
-# 继承person使其拥有person的熟悉
+# 继承person使其拥有person的属性
 @ex_dataclass
 class Male(Person):
     gender: str = field(default="male")
@@ -223,9 +223,6 @@ print(rose.details.phone)
 
 
 请移步: [文档]()
-
-
-### 文档
 
 
 ### 联系方式
