@@ -2,8 +2,8 @@
 
 [![LICENSE](https://img.shields.io/github/license/Shadow-linux/ex_dataclass)](https://img.shields.io/github/license/Shadow-linux/ex_dataclass)
 [![VERSION](https://img.shields.io/github/v/release/Shadow-linux/ex_dataclass)](https://img.shields.io/github/v/release/Shadow-linux/ex_dataclass)
-[![PYPI](https://img.shields.io/pypi/v/ex-dataclass)](https://img.shields.io/pypi/v/ex-dataclass)
-[![LANGUAGE](https://img.shields.io/badge/python-3.6%2B-blue)](https://img.shields.io/badge/python-3.6%2B-blue)
+[![PYPI](https://img.shields.io/pypi/v/ex-dataclass)](https://pypi.org/project/ex-dataclass/)
+[![LANGUAGE](https://img.shields.io/badge/python-3.7%2B-blue)](https://img.shields.io/badge/python-3.7%2B-blue)
 [![codebeat badge](https://codebeat.co/badges/495b3202-92b5-4301-8afd-1e146e62fe3e)](https://codebeat.co/projects/github-com-shadow-linux-ex_dataclass-master)
 
 ### ex_dataclass 是什么？
