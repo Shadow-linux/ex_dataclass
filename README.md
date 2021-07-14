@@ -25,6 +25,7 @@
 - [x] **typing.List**
 - [x] **typing.Union**
 - [x] **typing.Type**
+- [x] **ex_dataclass** cover的类型
 
 * **功能**
 - [x] 支持 `ex_dataclass` 类型继承的正反解析；
