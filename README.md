@@ -34,6 +34,7 @@
 - [x] 支持 `typing.Union` 和 `typing.Type` 特殊容器类型注解的多态行为，精确匹配字段存在最多 `ex_dataclass` 类
 - [x] 支持反向解析下存在冗余字段，并且抛弃该字段
 - [x] 支持typing.Union 和 typing.Type 特殊容器类型相互嵌套场景 
+- [ ] 支持纯净的class类型的正反转换解析；
 - [ ] 支持 `ex_dataccass` 字段检测校验，通过类型注解获取类后进行值的校验；
 
 ### 快速开始
