@@ -71,9 +71,11 @@ def __process_e_class(c_class: typing.Type, **kwargs):
             f_.build()
             expack_fileds_map[field_name] = f_
 
+            # is dataclass instance
+            if f_.is_dataclass:
+                nv_kwargs[field_name] = field_value
             # ignore not define property
             if f_.is_abort:
-                nv_kwargs[field_name] = field_value
                 continue
 
             # expack loads_<FieldName>

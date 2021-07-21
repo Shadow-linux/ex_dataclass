@@ -85,7 +85,7 @@ class Field_:
         # abort  abort function
         self.is_abort = False
         # if is dataclass instance that will be ignored
-        self.is_abort = m.is_dataclass_instance(self.field_value)
+        self.is_abort = self.is_dataclass = m.is_dataclass_instance(self.field_value)
 
         if not self.is_abort:
             self.__find_ft_with_mro()
