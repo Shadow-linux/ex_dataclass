@@ -14,11 +14,7 @@ from ex_dataclass.type_ import Field_
 from . import m
 
 
-# transfer function type
-def asdict_xxxFieldName(value: typing.Any) -> m.F_VALUE:
-    pass
 
-asdict_func_type = asdict_xxxFieldName
 
 
 def asdict(obj, *, dict_factory=dict):
@@ -31,7 +27,7 @@ def __asdict_inner(obj, dict_factory):
     if m.is_dataclass_instance(obj):
         result = []
         for f in m.fields(obj):
-            asdict_fn: asdict_func_type = getattr(obj, f"{m.AsditFuncPrefix}_{f.name}", None)
+            asdict_fn: m.asdict_func_type = getattr(obj, f"{m.AsdictFuncPrefix}_{f.name}", None)
             if asdict_fn:
                 value = asdict_fn(getattr(obj, f.name, None))
             else:

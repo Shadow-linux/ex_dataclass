@@ -6,10 +6,10 @@ import threading
 import typing
 import asyncio
 from ex_dataclass import m
-from ex_dataclass.m import dataclass
+from ex_dataclass.m import dataclass, asdict_func_type, loads_func_type
 from ex_dataclass.type_ import Field_
 from ex_dataclass.core import Core
-from ex_dataclass.xpack import EXpack, asdict, asdict_func_type
+from ex_dataclass.xpack import EXpack, asdict
 from ex_dataclass.ex_field import field, get_field_witch_cls, check_field_is_required
 from ex_dataclass.error import FieldRequiredError
 
@@ -48,11 +48,12 @@ def __process_e_class(c_class: typing.Type, **kwargs):
 
         # finally kwargs
         nv_kwargs = {}
-        props_map = {}
+        expack_fileds_map = {}
         kwargs_fname_list: typing.List[m.F_NAME] = kwargs.keys()
 
+
         # check field required params
-        for f_name, ex_field in getattr(e_class, '__dataclass_fields__').items():
+        for f_name, ex_field in getattr(e_class, m.DataClassFields).items():
             check_field_is_required(e_class.__name__, ex_field, kwargs_fname_list)
 
         for field_name, field_value in kwargs.items():
@@ -68,18 +69,25 @@ def __process_e_class(c_class: typing.Type, **kwargs):
             if debug: print(f_)
 
             f_.build()
+            expack_fileds_map[field_name] = f_
 
             # ignore not define property
             if f_.is_abort:
                 continue
 
+            # expack loads_<FieldName>
+            if m.is_expack(self):
+                lfn: m.loads_func_type = getattr(self, f"{m.LoadsFuncPrefix}_{field_name}", None)
+                if lfn:
+                    nv_kwargs[field_name] = lfn(field_value)
+                    continue
+
             Core.DEBUG = debug
             nv_kwargs[field_name] = Core.handle(f_)
-            props_map[field_name] = f_
 
         o_init(self, *args, **nv_kwargs)
-        if getattr(self, m.EXPackField, None):
-            self._with_debug(debug)._set_properties(props_map)
+        if m.is_expack(self):
+            self._with_debug(debug)._set_properties(expack_fileds_map)
 
     # bind methods
     e_class.__init__ = __init__

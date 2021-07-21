@@ -32,7 +32,6 @@ REGISTER_TYPE_LIST = (
 EMPTY = ""
 
 
-
 def ignore_type(t: type) -> bool:
     # ~T is typing.TypeVar mean generic type
     if type(t) in (typing.TypeVar,):
@@ -94,13 +93,12 @@ class Field_:
     def __str__(self):
         return f"<class 'Field_.{self.field_name}'>"
 
-
     # when field type is none, maybe we can find file_type in mro classes
     def __find_ft_with_mro(self):
         if self.field_type is None:
             for cls_ in self.__e_class.__mro__:
                 # ignore expack class
-                if getattr(self, m.EXPackField, None):
+                if m.is_expack(cls_):
                     continue
                 if hasattr(cls_, "__annotations__"):
                     self.field_type = cls_.__annotations__.get(self.field_name, None)
@@ -139,6 +137,7 @@ class Field_:
     @property
     def outside_field(self) -> ExField:
         return self.__outside_field
+
     @property
     def e_class(self):
         return self.__e_class

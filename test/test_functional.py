@@ -1,6 +1,7 @@
 import typing
+import datetime
 from collections import ChainMap
-from ex_dataclass.ex_dataclass import ex_dataclass, field
+from ex_dataclass.ex_dataclass import ex_dataclass, field, EXpack, asdict
 
 baseline = {'music': 'bach', 'art': 'rembrandt'}
 adjustments = {'art': 'van gogh', 'opera': 'carmen'}
@@ -113,3 +114,24 @@ class A(B, metaclass=XPackMeta):
         pass
 
 print(A())
+
+
+@ex_dataclass
+class User(EXpack):
+    created: datetime.datetime = field(default=datetime.datetime.now())
+
+    name: str = field(default_factory=str, required=True)
+    age: int = field(default_factory=int, required=True)
+    dd: datetime.datetime = field(default=datetime.datetime.now())
+
+    # 写一个函数，格式是: asdict_{filed_name}, 接受一个value，可以返回任意类型，返回值就是你想渲染的格式
+    def asdict_created(self, value: datetime.datetime) -> typing.Any:
+        return value.strftime("%Y-%m-%d")
+
+    def asdict_dd(self, value: datetime.datetime) -> object:
+        # print(field.field_name, field.field_value, field.field_type, field.type_name)
+        return value.strftime("%Y-%m-%d")
+
+u1 = User(**{"name": "jack", "age": 18})
+print(u1)
+print(asdict(u1))
