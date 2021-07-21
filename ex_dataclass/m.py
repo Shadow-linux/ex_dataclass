@@ -4,7 +4,6 @@ model & utils
 import typing
 from dataclasses import *
 
-
 # field type
 F_NAME = str
 F_TYPE = type
@@ -22,11 +21,28 @@ TypingUnion = "Union"
 
 EXPackField = "__ex_pack_field__"
 DataClassFields = '__dataclass_fields__'
-AsditFuncPrefix = "asdict"
+AsdictFuncPrefix = "asdict"
+LoadsFuncPrefix = "loads"
+
+
+# transfer function type
+def asdict_xxxFieldName(value: typing.Any) -> F_VALUE:
+    pass
+
+
+asdict_func_type = asdict_xxxFieldName
+
+
+def loads_xxxFieldName(value: typing.Any) -> F_VALUE:
+    pass
+
+
+loads_func_type = loads_xxxFieldName
 
 
 def is_expack(obj) -> bool:
     return hasattr(obj, EXPackField)
+
 
 def is_dataclass_instance(obj) -> bool:
     """Returns True if obj is an instance of a dataclass."""

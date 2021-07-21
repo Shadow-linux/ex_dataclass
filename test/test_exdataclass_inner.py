@@ -390,13 +390,11 @@ data = {
     "t_list_2": ["1", "2", "3"],
     "t_dict"  : {"a": 1, "b": 2},
     "asd_test": 222,
+    "eba": ExBasicA(),
 
 }
-data_str = json.dumps(data)
 ewmc = ExampleWithMetaClass(**data)
-ewmc2 = ExampleWithMetaClass.json_loads(data_str)
 print(ewmc)
-print(ewmc2)
 print(ewmc.asdict())
 
 print()
@@ -523,4 +521,26 @@ tfp = TestFieldParams1(**data)
 print(tfp)
 assert tfp.t_required == "1", True
 
+
+print()
+print("=" * 50 + " with EXPack loads extend functional " + "=" * 50)
+
+
+@ex_dataclass(ex_debug=True)
+class WithEXpackLoadsFn(EXpack):
+
+    data: str = field(default_factory=str)
+
+    def loads_data(self, v: int) -> str:
+        return str(v)
+
+    def asdict_data(self, v: str) -> int:
+        return int(v)
+
+lfn = WithEXpackLoadsFn(**{"data": 1})
+print(lfn)
+assert isinstance(lfn.data, str), True
+data = lfn.asdict()
+print(data)
+assert isinstance(data['data'], int), True
 
