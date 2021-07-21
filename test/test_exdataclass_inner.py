@@ -544,3 +544,17 @@ data = lfn.asdict()
 print(data)
 assert isinstance(data['data'], int), True
 
+
+
+print()
+print("=" * 50 + " with dataclass object " + "=" * 50)
+
+@ex_dataclass
+class WithExDataClassObject:
+
+    dd: WithEXpackLoadsFn = field(default_factory=WithEXpackLoadsFn)
+
+
+wedco = WithExDataClassObject(**{"dd": WithEXpackLoadsFn(**{"data": 1})})
+print(wedco)
+assert wedco.dd.data == "1", True
