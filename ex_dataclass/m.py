@@ -18,11 +18,14 @@ TypingSet = "Set"
 TypingDict = "Dict"
 TypingType = "Type"
 TypingUnion = "Union"
+TypingForwardRef = "ForwardRef"
 
 EXPackField = "__ex_pack_field__"
 DataClassFields = '__dataclass_fields__'
 AsdictFuncPrefix = "asdict"
 LoadsFuncPrefix = "loads"
+
+E_CLASS_CACHE = dict()
 
 
 # transfer function type

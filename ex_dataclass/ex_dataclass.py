@@ -1,5 +1,6 @@
 """
 ex_dataclass
+https://github.com/Shadow-linux/ex_dataclass
 """
 import json
 import threading
@@ -18,10 +19,11 @@ __all__ = [
     'asdict',
     'typing',
     'ex_dataclass',
-    'asdict_func_type',
     'EXpack',
     'Field_',
     'FieldRequiredError',
+    'loads_func_type',
+    'asdict_func_type',
 ]
 
 EX_DEBUG = "ex_debug"
@@ -51,7 +53,6 @@ def __process_e_class(c_class: typing.Type, **kwargs):
         expack_fileds_map = {}
         kwargs_fname_list: typing.List[m.F_NAME] = kwargs.keys()
 
-
         # check field required params
         for f_name, ex_field in getattr(e_class, m.DataClassFields).items():
             check_field_is_required(e_class.__name__, ex_field, kwargs_fname_list)
@@ -59,7 +60,6 @@ def __process_e_class(c_class: typing.Type, **kwargs):
         for field_name, field_value in kwargs.items():
             # find field type
             field_type = e_class.__annotations__.get(field_name, None)
-
             f_ = Field_(e_class=e_class,
                         field_name=field_name,
                         field_value=field_value,
@@ -95,8 +95,12 @@ def __process_e_class(c_class: typing.Type, **kwargs):
     # bind methods
     e_class.__init__ = __init__
 
+    # 缓存 e_class
+    m.E_CLASS_CACHE[e_class.__name__] = e_class
+
     if debug:
-        print(f"---- {e_class} ----")
+        print(f"---- {e_class.__name__} ----")
+        print(f"E_CLASS CACHE: {m.E_CLASS_CACHE}")
 
     return e_class
 

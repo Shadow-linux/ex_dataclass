@@ -89,7 +89,7 @@ class ExTypeB:
     b2: int = field(default_factory=int)
 
 
-@ex_dataclass(ex_debug=False)
+@ex_dataclass(ex_debug=True)
 class ExTypeC(EXpack):
     c_a: ExTypeA = field(default_factory=ExTypeA)
     c_b: ExTypeB = field(default_factory=ExTypeB)
@@ -270,17 +270,17 @@ ettwt = ExampleTTypeWithTList(**{
 ettwt1 = ExampleTTypeWithTList(**{
     "tl1": [
         ExGenericA(**{
-        "a1"   : 1,
-        "basic": "a"
-    })
+            "a1"   : 1,
+            "basic": "a"
+        })
     ]
 })
 ettwt2 = ExampleTTypeWithTList(**{
     "tl": [
         ExGenericA(**{
-        "a1"   : 1,
-        "basic": "a"
-    })
+            "a1"   : 1,
+            "basic": "a"
+        })
     ]
 })
 print(ettwt)
@@ -390,7 +390,7 @@ data = {
     "t_list_2": ["1", "2", "3"],
     "t_dict"  : {"a": 1, "b": 2},
     "asd_test": 222,
-    "eba": ExBasicA(),
+    "eba"     : ExBasicA(),
 
 }
 ewmc = ExampleWithMetaClass(**data)
@@ -409,12 +409,13 @@ class NormalClass:
         self.username = username
 
 
-@ex_dataclass
+@ex_dataclass(ex_debug=True)
 class ExampleDatetime(EXpack):
     dd: datetime.datetime = field(default=datetime.datetime.now())
     a1: int = field(default_factory=int)
     # normal class
     nc: NormalClass = field(default_factory=dict)
+    nc_list: typing.List[NormalClass] = field(default_factory=list)
 
     def asdict_dd(self, value: datetime.datetime) -> object:
         # print(field.field_name, field.field_value, field.field_type, field.type_name)
@@ -425,9 +426,10 @@ class ExampleDatetime(EXpack):
 
 
 ed = ExampleDatetime(**{
-    "dd": datetime.datetime.now(),
-    "a1": 1,
-    "nc": NormalClass(user_id=1, username='lisi'),
+    "dd"     : datetime.datetime.now(),
+    "a1"     : 1,
+    "nc"     : NormalClass(user_id=1, username='lisi'),
+    "nc_list": [NormalClass(user_id=1, username='lisi')],
 })
 print(ed)
 assert ed.a1 == 1, True
@@ -464,7 +466,7 @@ class TypeB(TypeType):
     b2: int = field(default_factory=int)
 
 
-@ex_dataclass(ex_debug=False)
+@ex_dataclass(ex_debug=True)
 class TypingUnionNestTypingType(EXpack):
     # expect UnionA
     test1: typing.Union[UnionA, typing.Type[TypeType]] = field(default_factory=UnionA)
@@ -477,7 +479,7 @@ class TypingUnionNestTypingType(EXpack):
 
 
 data = {
-    "test1": {"a1": 1, "a2": 2},
+    "test1": UnionA(**{"a1": 1, "a2": 2}),
     "test2": {"a1": 1, "a2": 2, "t1": 1},
     "test3": {"b1": 1, "b2": 2, "t1": 1},
     "test4": [{"a1": 1, "a2": 2, "t1": 1}, {"b1": 1, "b2": 2, "t1": 1}]
@@ -492,20 +494,18 @@ assert type(tuntt.test4[1]) == TypeB, True
 
 print(dir(tuntt))
 
-
 print()
 print("=" * 50 + " field params " + "=" * 50)
+
+
 @ex_dataclass
 class TestFieldParams:
-
     t_required: str = field(default_factory=str, required=True)
 
 
 @ex_dataclass
 class TestFieldParams1(EXpack):
-
     t_required: str = field(default_factory=str, required=False)
-
 
 
 data = {}
@@ -521,14 +521,12 @@ tfp = TestFieldParams1(**data)
 print(tfp)
 assert tfp.t_required == "1", True
 
-
 print()
 print("=" * 50 + " with EXPack loads extend functional " + "=" * 50)
 
 
 @ex_dataclass(ex_debug=True)
 class WithEXpackLoadsFn(EXpack):
-
     data: str = field(default_factory=str)
 
     def loads_data(self, v: int) -> str:
@@ -537,6 +535,7 @@ class WithEXpackLoadsFn(EXpack):
     def asdict_data(self, v: str) -> int:
         return int(v)
 
+
 lfn = WithEXpackLoadsFn(**{"data": 1})
 print(lfn)
 assert isinstance(lfn.data, str), True
@@ -544,17 +543,61 @@ data = lfn.asdict()
 print(data)
 assert isinstance(data['data'], int), True
 
-
-
 print()
 print("=" * 50 + " with dataclass object " + "=" * 50)
 
+
 @ex_dataclass
 class WithExDataClassObject:
-
     dd: WithEXpackLoadsFn = field(default_factory=WithEXpackLoadsFn)
 
 
 wedco = WithExDataClassObject(**{"dd": WithEXpackLoadsFn(**{"data": 1})})
 print(wedco)
 assert wedco.dd.data == "1", True
+
+
+print()
+print("=" * 50 + " with typing ForwardRef (Beta)" + "=" * 50)
+@ex_dataclass(ex_debug=False)
+class AppArgs:
+    name: str = field(default="app")
+    alias: str = field(default_factory=str)
+    help: str = field(default="add help")
+    args: typing.List[typing.List] = field(default_factory=list)
+    children: typing.List['AppArgs'] = field(default_factory=list)
+
+
+
+
+dd = {
+    "name"    : "xxx",
+    "alias"   : "xxx",
+    "help"    : 'xxx',
+    "args"    : [],
+    "children": [
+        {
+            "name"    : "xxx",
+            "alias"   : "xxx",
+            "help"    : 'xxx',
+            "args"    : [],
+            "children": [
+                {
+                    "name"    : "xxx",
+                    "alias"   : "xxx",
+                    "help"    : 'xxx',
+                    "args"    : [],
+                    "children": [
+
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+
+
+aa = AppArgs(**dd)
+print(aa)
+assert aa.children[0].children[0].name == "xxx", True

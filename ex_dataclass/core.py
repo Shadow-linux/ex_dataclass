@@ -7,7 +7,7 @@ from abc import abstractmethod, ABCMeta
 from . import m
 from .m import is_dataclass
 from ex_dataclass import type_
-from ex_dataclass.type_ import Field_, ignore_type
+from ex_dataclass.type_ import Field_, ignore_type, handle_eclass_forward_ref
 
 
 class _FieldTyping(m.ToolImpl, metaclass=ABCMeta):
@@ -204,7 +204,7 @@ class IteratorImplement(m.ToolImpl):
 
             if ignore_type(attr_field_types[0]): return None
 
-            return attr_field_types[0]
+            return handle_eclass_forward_ref(attr_field_types[0])
 
         return None
 

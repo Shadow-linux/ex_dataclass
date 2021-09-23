@@ -3,8 +3,7 @@
 
 typing.List
 typing.Dict
-
-typing.Union  // 待定
+typing.Union
 typing.Type
 
 str
@@ -39,6 +38,20 @@ def ignore_type(t: type) -> bool:
     return False
 
 
+# 处理如果是字符串的引用类
+def handle_eclass_forward_ref(ref_type: typing.Type) -> typing.Type:
+    """
+    :param e_class:
+    :param ref_type: typing.ForwardRef
+    :return:
+    """
+
+    e_class_name: str = getattr(ref_type, "__forward_arg__", None)
+    if not e_class_name:
+        e_class_name = ref_type
+    return m.E_CLASS_CACHE.get(e_class_name, ref_type)
+
+
 def is_typing_list(ft: m.F_TYPE) -> bool:
     return getattr(ft, '_name', None) == m.TypingList
 
@@ -55,6 +68,15 @@ def is_typing_union(ft: m.F_TYPE) -> bool:
 
 def is_typing_type(ft: m.F_TYPE) -> bool:
     return getattr(ft, '_name', None) == m.TypingType
+
+
+def is_typing_forward_ref(ft: m.F_TYPE) -> bool:
+    if isinstance(ft, str):
+        if m.E_CLASS_CACHE.get(ft, None):
+            return True
+    if getattr(ft, '__forward_arg__', None):
+        return True
+    return False
 
 
 class Field_:
@@ -81,6 +103,7 @@ class Field_:
         self.is_dataclass = False
         self.is_typing_union = False
         self.is_typing_type = False
+        self.is_typing_forwardref = False
 
         # abort  abort function
         self.is_abort = False
@@ -134,6 +157,12 @@ class Field_:
         self.is_typing_type = is_typing_type(self.field_type)
         return m.TypingType, self.is_typing_type
 
+    # 该类型只会出现在typing.List['App']，那么'App'变会成为typing.ForwardRef
+    def __ft_is_typing_forwardref(self) -> (m.F_TYPE, bool):
+        self.is_typing_forwardref = is_typing_forward_ref(self.field_type)
+        self.field_type = handle_eclass_forward_ref(self.field_type)
+        return m.TypingForwardRef, self.is_typing_forwardref
+
     @property
     def outside_field(self) -> ExField:
         return self.__outside_field
@@ -148,12 +177,14 @@ class Field_:
 
     def build(self) -> "Field_":
         if not self.is_abort and not self.is_dataclass:
-            for ft_fn in (self.__ft_is_basic,
-                          self.__ft_is_dataclass,
-                          self.__ft_is_dict,
-                          self.__ft_is_list,
-                          self.__ft_is_typing_union,
-                          self.__ft_is_typing_type):
+            for ft_fn in (
+                    self.__ft_is_typing_forwardref,
+                    self.__ft_is_basic,
+                    self.__ft_is_dataclass,
+                    self.__ft_is_dict,
+                    self.__ft_is_list,
+                    self.__ft_is_typing_union,
+                    self.__ft_is_typing_type):
                 self.__type_name, ok = ft_fn()
                 if ok:
                     break
