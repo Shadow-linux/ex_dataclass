@@ -304,7 +304,12 @@ etuwt = ExampleTUnionWithTList(**{
     "tl1": [{
         "a1": 1,
         "aa": 2,
-    }],
+        },
+        {
+            "a2": 1,
+            "aa": 2,
+        }
+    ],
     "tl2": [{
         "a2": 1,
         "aa": 2,
@@ -542,6 +547,7 @@ assert isinstance(lfn.data, str), True
 data = lfn.asdict()
 print(data)
 assert isinstance(data['data'], int), True
+assert lfn.data == str(1), True
 
 print()
 print("=" * 50 + " with dataclass object " + "=" * 50)
@@ -556,18 +562,19 @@ wedco = WithExDataClassObject(**{"dd": WithEXpackLoadsFn(**{"data": 1})})
 print(wedco)
 assert wedco.dd.data == "1", True
 
-
 print()
 print("=" * 50 + " with typing ForwardRef (Beta)" + "=" * 50)
+
+hh = str
+
+
 @ex_dataclass(ex_debug=False)
 class AppArgs:
     name: str = field(default="app")
     alias: str = field(default_factory=str)
-    help: str = field(default="add help")
+    help: hh = field(default="add help")
     args: typing.List[typing.List] = field(default_factory=list)
     children: typing.List['AppArgs'] = field(default_factory=list)
-
-
 
 
 dd = {
@@ -596,8 +603,26 @@ dd = {
     ]
 }
 
-
-
 aa = AppArgs(**dd)
 print(aa)
 assert aa.children[0].children[0].name == "xxx", True
+
+
+print()
+print("=" * 50 + " with EXpack inherit" + "=" * 50)
+
+
+@ex_dataclass(ex_debug=True)
+class WithEXpackBasic(EXpack):
+
+    a1: int = field(default_factory=int)
+
+
+@ex_dataclass(ex_debug=True)
+class WithEXpackInherit(WithEXpackBasic):
+    a2: int = field(default_factory=int)
+
+
+wei = WithEXpackInherit(**{"a1": 10, "a2": 2})
+print(wei)
+print(wei.fields.get("a1").is_dataclass)

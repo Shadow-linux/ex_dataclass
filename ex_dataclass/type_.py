@@ -120,13 +120,12 @@ class Field_:
     def __find_ft_with_mro(self):
         if self.field_type is None:
             for cls_ in self.__e_class.__mro__:
-                # ignore expack class
-                if m.is_expack(cls_):
-                    continue
+
                 if hasattr(cls_, "__annotations__"):
                     self.field_type = cls_.__annotations__.get(self.field_name, None)
                     if self.field_type:
                         break
+
 
         if self.field_type is None:
             self.is_abort = True

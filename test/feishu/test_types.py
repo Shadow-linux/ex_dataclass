@@ -58,7 +58,7 @@ body = MsgReq(**{
                   "user_id": "1",
                     "user_name": "xxx"
                 },{
-                    "text": "xxx",
+                    "text": "hello",
                     "href": "xxx",
                 }]
             ]
@@ -68,3 +68,5 @@ body = MsgReq(**{
 })
 
 print(body)
+assert body.content.zh_cn.content[0][0].user_id == "1", True
+assert body.content.zh_cn.content[0][1].text == "hello", True

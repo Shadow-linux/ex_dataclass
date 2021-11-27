@@ -76,12 +76,14 @@ def __process_e_class(c_class: typing.Type, **kwargs):
                 nv_kwargs[field_name] = field_value
             # ignore not define property
             if f_.is_abort:
+                if debug: print(f"{f_} will be ignored.")
                 continue
 
             # expack loads_<FieldName>
             if m.is_expack(self):
                 lfn: m.loads_func_type = getattr(self, f"{m.LoadsFuncPrefix}_{field_name}", None)
                 if lfn:
+                    if debug: print(f"{f_} loads from {m.LoadsFuncPrefix}_{field_name}.")
                     nv_kwargs[field_name] = lfn(field_value)
                     continue
 
