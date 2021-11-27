@@ -625,4 +625,4 @@ class WithEXpackInherit(WithEXpackBasic):
 
 wei = WithEXpackInherit(**{"a1": 10, "a2": 2})
 print(wei)
-print(wei.fields.get("a1").is_dataclass)
+print(wei.fields_xx.get("a1").is_dataclass)

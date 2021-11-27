@@ -51,18 +51,22 @@ class EXpack:
     __ex_pack_field__ = m.EXPackField
 
     # reduce memory usage
-    __slots__ = ['fields', 'ex_debug']
+    __slots__ = ['__fields_xx', '__ex_debug_xx']
 
     def __init__(self, *args, **kwargs):
-        self.fields: typing.Dict[m.F_NAME, Field_] = {}
-        self.ex_debug = False
+        self.__fields_xx: typing.Dict[m.F_NAME, Field_] = {}
+        self.__ex_debug_xx = False
+
+    @property
+    def fields_xx(self) -> typing.Dict[m.F_NAME, Field_]:
+        return self.__fields_xx
 
     def _set_properties(self, fields: typing.Dict[m.F_NAME, Field_] = None) -> 'EXpack':
-        self.fields = fields
+        self.__fields_xx = fields
         return self
 
     def _with_debug(self, debug: bool) -> 'EXpack':
-        self.ex_debug = debug
+        self.__ex_debug_xx = debug
         return self
 
     def asdict(self) -> typing.Dict:
