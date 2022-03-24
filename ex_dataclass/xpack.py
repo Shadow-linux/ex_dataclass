@@ -14,9 +14,6 @@ from ex_dataclass.type_ import Field_
 from . import m
 
 
-
-
-
 def asdict(obj, *, dict_factory=dict):
     if not m.is_dataclass_instance(obj):
         raise TypeError("asdict() should be called on ex_dataclass instances")
@@ -31,7 +28,7 @@ def __asdict_inner(obj, dict_factory):
                 asdict_fn: m.asdict_func_type = getattr(obj, f"{m.AsdictFuncPrefix}_{f.name}", None)
                 if asdict_fn:
                     result.append(
-                            (f.name,asdict_fn(getattr(obj, f.name, None)))
+                            (f.name, asdict_fn(getattr(obj, f.name, None)))
                     )
 
                     continue
@@ -61,7 +58,6 @@ def __asdict_inner(obj, dict_factory):
 
 
 class EXpack:
-
     # identification
     __ex_pack_field__ = m.EXPackField
 
@@ -97,5 +93,3 @@ class EXpack:
     def pprint(self):
         import pprint
         pprint.pprint(asdict(self))
-
-

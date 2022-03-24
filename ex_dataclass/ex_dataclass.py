@@ -57,7 +57,6 @@ def __process_e_class(c_class: typing.Type, **kwargs):
         nv_kwargs = {}
         expack_fileds_map = {}
         kwargs_fname_list: typing.List[m.F_NAME] = kwargs.keys()
-        print(kwargs)
         # check field required params
         for f_name, ex_field in getattr(e_class, m.DataClassFields).items():
             label_2_field_name_map[ex_field.label] = f_name
