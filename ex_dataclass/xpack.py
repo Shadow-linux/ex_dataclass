@@ -19,7 +19,7 @@ from . import m
 
 def asdict(obj, *, dict_factory=dict):
     if not m.is_dataclass_instance(obj):
-        raise TypeError("asdict() should be called on dataclass instances")
+        raise TypeError("asdict() should be called on ex_dataclass instances")
     return __asdict_inner(obj, dict_factory)
 
 
@@ -27,11 +27,26 @@ def __asdict_inner(obj, dict_factory):
     if m.is_dataclass_instance(obj):
         result = []
         for f in m.fields(obj):
-            asdict_fn: m.asdict_func_type = getattr(obj, f"{m.AsdictFuncPrefix}_{f.name}", None)
-            if asdict_fn:
-                value = asdict_fn(getattr(obj, f.name, None))
-            else:
-                value = __asdict_inner(getattr(obj, f.name), dict_factory)
+            if m.is_expack(obj):
+                asdict_fn: m.asdict_func_type = getattr(obj, f"{m.AsdictFuncPrefix}_{f.name}", None)
+                if asdict_fn:
+                    result.append(
+                            (f.name,asdict_fn(getattr(obj, f.name, None)))
+                    )
+
+                    continue
+
+                if hasattr(obj, "fields_xx"):
+                    filed_obj = obj.fields_xx.get(f.name, None)
+                    if filed_obj:
+                        if filed_obj.outside_field.asdict_factory:
+                            result.append(
+                                    (f.name,
+                                     filed_obj.outside_field.asdict_factory(getattr(obj, f.name, None)))
+                            )
+                            continue
+
+            value = __asdict_inner(getattr(obj, f.name), dict_factory)
             result.append((f.name, value))
         return dict_factory(result)
 

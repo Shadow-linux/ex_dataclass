@@ -23,12 +23,28 @@ class ExField(Field):
                  'init',
                  'compare',
                  'metadata',
+                 'asdict_factory',
+                 'loads_factory',
+                 'label',  # label: json data's key
                  '_field_type',  # Private: not to be used by user code.
                  )
 
-    def __init__(self, default, default_factory, required, init, repr, hash, compare,
+    def __init__(self,
+                 default,
+                 default_factory,
+                 required: bool,
+                 label: str,
+                 asdict_factory: m.asdict_func_type,
+                 loads_factory: m.loads_func_type,
+                 init,
+                 repr,
+                 hash,
+                 compare,
                  metadata):
         self.required = required
+        self.label = label
+        self.asdict_factory = asdict_factory
+        self.loads_factory = loads_factory
 
         self._field_type = None
         super().__init__(default, default_factory, init, repr, hash, compare,
@@ -41,6 +57,8 @@ class ExField(Field):
                 f'type={self.type!r},'
                 f'default={self.default!r},'
                 f'default_factory={self.default_factory!r},'
+                f'required={self.required},'
+                f'label={self.label},'
                 f'init={self.init!r},'
                 f'repr={self.repr!r},'
                 f'hash={self.hash!r},'
@@ -57,14 +75,30 @@ class ExField(Field):
 
 
 # # todo 后续会增加is_validate 标识开启 validate 校验
-def field(*, default=MISSING, default_factory=MISSING, required=False, init=True, repr=True,
+def field(*,
+          default=MISSING,
+          default_factory=MISSING,
+          required: bool = False,
+          label: str = None,
+          asdict_factory: m.asdict_func_type = None,
+          loads_factory: m.loads_func_type = None,
+          init=True, repr=True,
           hash=None, compare=True, metadata=None):
     """Return an object to identify dataclass fields.
     """
 
     if default is not MISSING and default_factory is not MISSING:
         raise ValueError('cannot specify both default and default_factory')
-    return ExField(default, default_factory, required, init, repr, hash, compare,
+    return ExField(default,
+                   default_factory,
+                   required,
+                   label,
+                   asdict_factory,
+                   loads_factory,
+                   init,
+                   repr,
+                   hash,
+                   compare,
                    metadata)
 
 

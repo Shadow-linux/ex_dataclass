@@ -22,8 +22,7 @@ class _FieldTyping(m.ToolImpl, metaclass=ABCMeta):
     # get attribute filed type from container type
     def get_attr_field_types(self) -> typing.Tuple[m.DataClassType]:
         attr_field_types = self.f.field_type.__dict__.get('__args__', ())
-        if self.debug:
-            print(f"{self.f}.attr_field_types: {attr_field_types}")
+        self.log_debug(f"{self.f}.attr_field_types: {attr_field_types}")
         return attr_field_types
 
     # 获取所有的attribute 包括所有的继承属性
@@ -38,6 +37,8 @@ class _FieldTyping(m.ToolImpl, metaclass=ABCMeta):
     def __calculate_best_chosen(self, ft: m.F_TYPE, max_score: int) -> typing.Tuple[m.F_TYPE, int]:
         score = 0
         if is_dataclass(ft):
+            if not isinstance(self.f.field_value, dict):
+                return ft, max_score
             # others
             # get DataClassType's attributes, return data format: typing.Dict[name, F_TYPE]
             attr_dict = self.get_ft_attr(ft)
@@ -58,11 +59,36 @@ class _FieldTyping(m.ToolImpl, metaclass=ABCMeta):
 
         # special container typing.Type
         if type_.is_typing_type(ft):
-            ftt = FieldTypingType.with_debug(self.debug, Field_(e_class=self.f.e_class, field_type=ft,
+            ftt = FieldTypingType.with_debug(self.debug, Field_(e_class=self.f.e_class,
+                                                                field_type=ft,
                                                                 field_value=self.f.field_value,
                                                                 field_name=self.f.field_name))
             ftt.handle()
             return self.__calculate_best_chosen(ftt.smart_ft, max_score)
+
+        # special container typing.Union
+        if type_.is_typing_union(ft):
+            ftt = FieldTypingUnion.with_debug(self.debug, Field_(e_class=self.f.e_class,
+                                                                field_type=ft,
+                                                                field_value=self.f.field_value,
+                                                                field_name=self.f.field_name))
+            ftt.handle()
+            return self.__calculate_best_chosen(ftt.smart_ft, max_score)
+
+        if type_.is_typing_list(ft):
+            if isinstance(self.f.field_value, list):
+                max_score += 1
+                return ft, max_score
+
+        if type_.is_typing_dict(ft):
+            if isinstance(self.f.field_value, dict):
+                max_score += 1
+                return ft, max_score
+
+        if ft in type_.BASIC_TYPE_LIST:
+            if isinstance(self.f.field_value, type_.BASIC_TYPE_LIST):
+                max_score += 1
+                return ft, max_score
 
         return ft, max_score
 
@@ -73,21 +99,21 @@ class _FieldTyping(m.ToolImpl, metaclass=ABCMeta):
         return_ft: m.DataClassType = None
         max_score = tmp_max_score = 0
 
-        if self.debug:
-            print(f"{self.f}.chosen_types: {attr_field_types}")
-            print(f"{self.f}.smart_choice_ft.field_value: {self.f.field_value}")
+        self.log_debug(f"{self.f}.chosen_types: {attr_field_types}",
+                       f"{self.f}.smart_choice_ft.field_value: {self.f.field_value}")
+
 
         for ft in attr_field_types:
             # 因为typing.Type是继承关系，所以score需要继承
             tmp_return_ft, tmp_max_score = self.__calculate_best_chosen(ft, max_score)
-            if self.debug:
-                print(f"{self.f}.score: {tmp_return_ft}, {tmp_max_score}")
+
+            self.log_debug(f"{self.f}.score: {tmp_return_ft}, {tmp_max_score}")
+
             if tmp_max_score > max_score:
                 max_score = tmp_max_score
                 return_ft = tmp_return_ft
 
-        if self.debug:
-            print(f"{self.f}.smart_choice_ft: {return_ft}, score: {tmp_max_score}")
+        self.log_debug(f"{self.f}.smart_choice_ft: {return_ft}, score: {tmp_max_score}")
 
         return return_ft
 
@@ -126,7 +152,18 @@ class FieldTypingUnion(_FieldTyping):
 
         self.smart_ft = self.smart_choice_ft(list(attr_field_types))
         if self.smart_ft:
-            return self.smart_ft(**self.f.field_value)
+            if isinstance(self.f.field_value, list):
+
+                f_ = Field_(e_class=self.f.e_class,
+                            field_name=self.f.field_name,
+                            field_value=self.f.field_value,
+                            field_type=self.smart_ft,
+                            o_field=self.f.outside_field
+                            )
+                return FieldTypingList.with_debug(self.debug, f_).handle()
+
+            if isinstance(self.f.field_value, dict):
+                return self.smart_ft(**self.f.field_value)
 
         return self.f.field_value
 
@@ -161,8 +198,8 @@ class FieldTypingList(_FieldTyping):
         return None
 
     def handle(self) -> typing.List[object]:
-
         if getattr(self.f.field_type, "_name", None) == self.FT_NAME:
+
             self.iterator_impl = IteratorImplement.with_debug(self.debug, self.f)
             res_fv_list = self.iterator_impl.gen_values()
 
@@ -195,8 +232,8 @@ class IteratorImplement(m.ToolImpl):
     # we should find the <DataClassType>
     def __find_the_container_attribute_type(self, ft: m.F_TYPE) -> typing.Optional[m.F_TYPE]:
         attr_field_types = ft.__dict__.get('__args__', ())
-        if self.debug:
-            print(f"{self.f}.attr_field_types: {attr_field_types}")
+
+        self.log_debug(f"{self.f}.attr_field_types: {attr_field_types}")
 
         if attr_field_types:
             if self.__recognize_layer_type(attr_field_types[0]):
@@ -295,10 +332,12 @@ class IteratorImplement(m.ToolImpl):
     def gen_values(self) -> typing.List[typing.Any]:
         self.__layer_amount = len(self.__layer_container_types)
         self.is_recursive_iterator = self.__layer_amount > 1
-        if self.debug:
-            print(f"{self.f}.container_attr_type: {self.container_attr_type}")
-            print(f"{self.f}.is_recursive_iterator: {self.is_recursive_iterator}")
-            print(f"{self.f}.__layer_amount: {self.layer_amount}")
+
+        self.log_debug(
+                f"{self.f}.container_attr_type: {self.container_attr_type}",
+                f"{self.f}.is_recursive_iterator: {self.is_recursive_iterator}",
+                f"{self.f}.__layer_amount: {self.layer_amount}",
+        )
 
         res = self.__handle_recursive(current_layer=1, values=self.f.field_value)
         return res
@@ -348,6 +387,7 @@ class Core:
 
     @classmethod
     def handle(cls, f: Field_) -> object:
+
         if cls.DEBUG:
             print(f"{f}.type_name: {f.type_name}")
             print(f"{f}.field_type: {f.field_type}")

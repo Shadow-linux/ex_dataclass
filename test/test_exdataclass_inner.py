@@ -445,7 +445,7 @@ print(ed_dict)
 assert type(ed_dict['dd']) == str, True
 
 print()
-print("=" * 50 + " typing type nest typing union " + "=" * 50)
+print("=" * 50 + " typing type nest typing union  " + "=" * 50)
 
 
 @ex_dataclass()
@@ -471,7 +471,7 @@ class TypeB(TypeType):
     b2: int = field(default_factory=int)
 
 
-@ex_dataclass(ex_debug=True)
+@ex_dataclass(ex_debug=False)
 class TypingUnionNestTypingType(EXpack):
     # expect UnionA
     test1: typing.Union[UnionA, typing.Type[TypeType]] = field(default_factory=UnionA)
@@ -481,13 +481,23 @@ class TypingUnionNestTypingType(EXpack):
     test3: typing.Union[TypeA, TypeType, TypeB, UnionA] = field(default_factory=TypeB)
     # expect TypeA,TypeB
     test4: typing.List[typing.Union[typing.Type[TypeType], UnionA]] = field(default_factory=list)
+    # expect TypeA
+    test5: typing.Union[UnionA, typing.Union[TypeA, TypeB]] = field(default_factory=TypeA)
+    # expect typing.List[TypeA]
+    test6: typing.Union[UnionA, typing.List[typing.Union[TypeA, TypeB]]] = field(default_factory=None)
+    # expect UnionA
+    test7: typing.Union[UnionA, typing.List[typing.Union[TypeA, TypeB]]] = field(default_factory=None)
 
 
 data = {
     "test1": UnionA(**{"a1": 1, "a2": 2}),
     "test2": {"a1": 1, "a2": 2, "t1": 1},
     "test3": {"b1": 1, "b2": 2, "t1": 1},
-    "test4": [{"a1": 1, "a2": 2, "t1": 1}, {"b1": 1, "b2": 2, "t1": 1}]
+    "test4": [{"a1": 1, "a2": 2, "t1": 1}, {"b1": 1, "b2": 2, "t1": 1}],
+    "test5": {"a1": 1, "a2": 2, "t1": 1},
+    "test6": [{"a1": 1, "a2": 2, "t1": 1}],
+    "test7": {"a1": 1, "a2": 2},
+
 }
 tuntt = TypingUnionNestTypingType(**data)
 print(tuntt)
@@ -496,8 +506,34 @@ assert type(tuntt.test2) == TypeA, True
 assert type(tuntt.test3) == TypeB, True
 assert type(tuntt.test4[0]) == TypeA, True
 assert type(tuntt.test4[1]) == TypeB, True
+assert type(tuntt.test5) == TypeA, True
+assert type(tuntt.test6[0]) == TypeA, True
+assert type(tuntt.test7) == UnionA, True
 
-print(dir(tuntt))
+
+
+
+print()
+print("=" * 50 + " typing union without ex-dataclass" + "=" * 50)
+
+@ex_dataclass
+class TData:
+
+    td: str = field(default_factory=str)
+
+
+@ex_dataclass(ex_debug=True)
+class TypingUnionWithoutDataClass:
+
+    a1: typing.Union[typing.List[TData], str] = field(default_factory=str)
+
+
+data = {
+    "a1": "a"
+}
+
+tuwdc = TypingUnionWithoutDataClass(**data)
+print(tuwdc)
 
 print()
 print("=" * 50 + " field params " + "=" * 50)
@@ -530,7 +566,7 @@ print()
 print("=" * 50 + " with EXPack loads extend functional " + "=" * 50)
 
 
-@ex_dataclass(ex_debug=True)
+@ex_dataclass(ex_debug=False)
 class WithEXpackLoadsFn(EXpack):
     data: str = field(default_factory=str)
 
@@ -612,17 +648,29 @@ print()
 print("=" * 50 + " with EXpack inherit" + "=" * 50)
 
 
-@ex_dataclass(ex_debug=True)
+def tmp_loads(v: str) -> int:
+    return int(v)
+
+def tmp_asdict(v: int) -> str:
+    return str(v)
+
+@ex_dataclass(ex_debug=False)
 class WithEXpackBasic(EXpack):
 
-    a1: int = field(default_factory=int)
+    a1: int = field(default_factory=int, required=False)
 
 
 @ex_dataclass(ex_debug=True)
 class WithEXpackInherit(WithEXpackBasic):
     a2: int = field(default_factory=int)
+    a3: datetime.datetime = field(default_factory=int, label="a-3", loads_factory=tmp_loads, asdict_factory=tmp_asdict)
 
 
-wei = WithEXpackInherit(**{"a1": 10, "a2": 2})
+
+wei = WithEXpackInherit(**{"a1": 10, "a2": 2, "a-3": "3"})
 print(wei)
-print(wei.fields_xx.get("a1").is_dataclass)
+print(asdict(wei))
+assert wei.a1 == 10, True
+assert wei.a2 == 2, True
+assert wei.fields_xx.get("a1").is_dataclass == False, True
+

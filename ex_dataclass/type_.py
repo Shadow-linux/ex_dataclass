@@ -18,9 +18,9 @@ from . import m
 from .m import is_dataclass
 from .ex_field import ExField
 
-BASIC_TYPE_LIST = (str, int, float, bool, list, dict,)
+BASIC_TYPE_LIST = (str, int, float, complex, bool)
 
-REGISTER_TYPE_LIST = (
+CONTAINER_TYPE_LIST = (
     # normal container
     list, dict,
     # typing container
@@ -111,7 +111,11 @@ class Field_:
         self.is_abort = self.is_dataclass = m.is_dataclass_instance(self.field_value)
 
         if not self.is_abort:
-            self.__find_ft_with_mro()
+            # handle label
+            if self.__outside_field:
+                if self.__outside_field.label:
+                    return
+                self.__find_ft_with_mro()
 
     def __str__(self):
         return f"<class 'Field_.{self.field_name}'>"
@@ -122,6 +126,7 @@ class Field_:
             for cls_ in self.__e_class.__mro__:
 
                 if hasattr(cls_, "__annotations__"):
+
                     self.field_type = cls_.__annotations__.get(self.field_name, None)
                     if self.field_type:
                         break

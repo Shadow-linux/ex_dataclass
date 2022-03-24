@@ -62,3 +62,10 @@ class ToolImpl:
         c = cls(*args, **kwargs)
         c.debug = debug
         return c
+
+
+    def log_debug(self, *contents):
+        if self.debug:
+            for c in contents:
+                print(c)
+
