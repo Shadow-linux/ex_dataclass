@@ -115,7 +115,7 @@ class Field_:
             if self.__outside_field:
                 if self.__outside_field.label:
                     return
-                self.__find_ft_with_mro()
+            self.__find_ft_with_mro()
 
     def __str__(self):
         return f"<class 'Field_.{self.field_name}'>"

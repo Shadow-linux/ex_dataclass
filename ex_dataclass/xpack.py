@@ -24,27 +24,28 @@ def __asdict_inner(obj, dict_factory):
     if m.is_dataclass_instance(obj):
         result = []
         for f in m.fields(obj):
+            dict_filed_name = f.label if f.label else f.name
             if m.is_expack(obj):
                 asdict_fn: m.asdict_func_type = getattr(obj, f"{m.AsdictFuncPrefix}_{f.name}", None)
                 if asdict_fn:
                     result.append(
-                            (f.name, asdict_fn(getattr(obj, f.name, None)))
+                            (dict_filed_name, asdict_fn(getattr(obj, f.name, None)))
                     )
 
                     continue
-
+                # fields_xx 存在于 expack
                 if hasattr(obj, "fields_xx"):
                     filed_obj = obj.fields_xx.get(f.name, None)
                     if filed_obj:
                         if filed_obj.outside_field.asdict_factory:
                             result.append(
-                                    (f.name,
+                                    (dict_filed_name,
                                      filed_obj.outside_field.asdict_factory(getattr(obj, f.name, None)))
                             )
                             continue
 
             value = __asdict_inner(getattr(obj, f.name), dict_factory)
-            result.append((f.name, value))
+            result.append((dict_filed_name, value))
         return dict_factory(result)
 
     elif isinstance(obj, list):

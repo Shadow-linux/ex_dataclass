@@ -673,4 +673,4 @@ print(asdict(wei))
 assert wei.a1 == 10, True
 assert wei.a2 == 2, True
 assert wei.fields_xx.get("a1").is_dataclass == False, True
-
+assert asdict(wei).get("a-3", None) == "3", True
