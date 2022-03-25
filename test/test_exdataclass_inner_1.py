@@ -1,6 +1,6 @@
 import json
 import typing
-from ex_dataclass import ex_dataclass, asdict, field
+from ex_dataclass import ex_dataclass, asdict, field, EXpack
 
 jdata = '''{
     "result": [
@@ -98,15 +98,16 @@ jdata = '''{
     "messages": []
 }'''
 
-
 ZoneStatus = str
 ZoneType = str
 
+
 @ex_dataclass
 class CloudFlareZoneOwner:
-    id: str = field(default="df9d0e15f9061a56892e388b88215033")     # ZoneID 根据接入根域不同决定
+    id: str = field(default="df9d0e15f9061a56892e388b88215033")  # ZoneID 根据接入根域不同决定
     type: str = field(default_factory=str)
     name: str = field(default_factory=str)
+
 
 @ex_dataclass
 class CloudFlareZoneResResult:
@@ -116,6 +117,7 @@ class CloudFlareZoneResResult:
     paused: bool = field(default_factory=bool)
     type: ZoneType = field(default_factory=ZoneType)
     owner: CloudFlareZoneOwner = field(default_factory=CloudFlareZoneOwner)
+
 
 # 多个账号信息汇聚，以result列表呈现
 @ex_dataclass
@@ -130,3 +132,31 @@ class CloudFlareZonesResInfo:
 d = CloudFlareZonesResInfo(**json.loads(jdata))
 print(d)
 print(asdict(d))
+
+import datetime
+
+# dict -> dataclass 类型；
+def loads_f(v: str) -> datetime.datetime:
+    if v == "":
+        return datetime.datetime.now()
+
+
+    return datetime.datetime.strptime(v, "%Y-%m-%d")
+
+
+# dataclass类型 -> dict;
+def asdict_f(v: datetime.datetime) -> str:
+    return v.strftime("%Y-%m-%d")
+
+
+@ex_dataclass
+class Date(EXpack):
+    created: datetime.datetime = field(default=None, loads_factory=loads_f, asdict_factory=asdict_f)
+
+d = Date(**{"created": "2022-01-01"})
+# Date(created=datetime.datetime(2022, 1, 1, 0, 0))
+print(d)
+# {'created': '2022-01-01'}
+print(asdict(d))
+assert isinstance(d.created, datetime.datetime), True
+assert asdict(d)["created"] == "2022-01-01", True
