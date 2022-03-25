@@ -8,7 +8,7 @@
 
 ### ex_dataclass 是什么？
 
-* **`ex_dataclass`** 是一款继基于 `dataclass` 开发的 `python` 库并且对数据模型的处理更加友好。它通过  **Python3的类型注解** 特性能轻易的处理 `dict` 转换成自定义 `class` 对象，从而明确复杂的数据模型，**降低**维护代码的压力、**降低**操作复杂数据难度，以及**提高**代码逻辑清晰度。
+* `ex_dataclass` 是一款继基于 dataclass 开发的 python 库并且对数据模型的处理更加友好。它通过  **Python3的类型注解** 特性能轻易的处理 dict 转换成自定义 datao bject (数据对象），从而明确复杂的数据模型，降低维护代码的压力、降低操作复杂数据难度，以及提高代码逻辑清晰度。
 * 它在配合 `Python3 typing` 模块的特殊容器的类型注解能实现更多高级功能，如：`typing.Type`、`typing.Union`；
 
 
